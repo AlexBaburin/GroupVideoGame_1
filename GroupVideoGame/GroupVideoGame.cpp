@@ -19,7 +19,7 @@ void Player1::UpdatePosition()
 }
 bool Game::Is_player_dead(int hp)
 {
-    if (hp <= 0)
+    if (hp <= 0 || score <= 0)
         return true;
     return false;
 }
@@ -28,6 +28,7 @@ int main()
 {
     Game game;
     Player* pl;
+    Clock cl;
     Event event;
     RenderWindow win(VideoMode(resolution, resolution), "Video game");
     while (win.isOpen())
@@ -36,6 +37,7 @@ int main()
                               //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
 
         game.Graphics(pl);
+        pl->score -= cl.getElapsedTime().asSeconds(); //обновляет таймер в секундах.
     }
 
     return 0;

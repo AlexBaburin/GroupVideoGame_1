@@ -4,6 +4,7 @@
 #include <chrono>
 
 #define DIMENSIONS 2
+#define OBJ_NUMBER 5
 
 class Player //движение, хп, счёт, мб невидимость
 {
@@ -67,6 +68,7 @@ class Map
 {
 public:
 	Texture map_texture;
+	RectangleShape objects[OBJ_NUMBER];
 	//рандомная генерация оцчов и врагов
 };
 
@@ -92,4 +94,4 @@ public:
 };
 int Player::hp = 100;
 int Player::player_position[DIMENSIONS] = {0, 0};
-int Player::score = 0;
+int Player::score = 100;
