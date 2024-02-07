@@ -35,6 +35,9 @@ class Map3
 
 };
 class Map4
+{
+
+};
 int Player::hp = 100;
 int Player::player_position[DIMENSIONS] = {0, 0};
 int Player::score = 0;
