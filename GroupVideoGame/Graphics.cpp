@@ -2,18 +2,22 @@
 #include "Graphics.h"
 using namespace sf;
 
-void Graphics()
-{
-	int resolution = 800;
-	RenderWindow win(VideoMode(resolution, resolution), "Video game");
-	while (true)
-	{
-		win.display();
-	}
-	while (win.isOpen())
-	{
-		Event event;
 
-		
-	}
+void draw_player(Player* pl, Map* m)
+{
+	//drawrect или drawsprite и тд (pl->player_position[0], pl->player_position[1]);
 }
+
+void draw_full_map()
+{
+	//отрисовка 4-х текстур классов Map
+}
+
+void Game::Graphics(Player* pl)
+{
+	draw_player(pl);
+	draw_full_map(); //отрисовка всей карты
+	draw_lives(pl);
+	draw_score(pl);
+}
+
