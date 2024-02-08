@@ -11,9 +11,12 @@ void Player::UpdateScore()
 {
     score += value; //value описать
 }
-void Player1::UpdatePosition()
+void Player1::UpdatePosition(RenderWindow& window, Event& event)
 {
+    while (window.pollEvent(event))
+    {
 
+    }
 }
 bool Game::Is_player_dead(int hp, int score)
 {
@@ -34,7 +37,7 @@ int main()
 {
     srand(time(NULL));
     Game game;
-    Map* map[NUMBER_OF_LOCATIONS]; //указатель на количество локаций
+    Map* map[NUMBER_OF_LOCATIONS] = { new Map1(), new Map2(), new Map3(), new Map4() }; //указатель на количество локаций
     Player* Main_player = new Player1();
     GenerateRandomPosition(Main_player); // геенерирование случайной позиции в начальной локации
     Clock cl;
@@ -45,9 +48,10 @@ int main()
     window.setIcon(128, 128, icon.getPixelsPtr()); //установка иконки игры (хз, поставил из своей игры, можете поменять)
     while (window.isOpen())
     {
-        Main_player->UpdatePosition(); //вывод новой позиции при нажатии клавиши, проверка пересечения 
-                              //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
-        game.Graphics(Main_player, map); // отрисовка карты и игрока
+        Main_player->UpdatePosition(window, event); //вывод новой позиции при нажатии клавиши, проверка пересечения 
+                             //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
+        Main_player->UpdateScore();
+        game.Graphics(window, Main_player, map); // отрисовка карты и игрока
         Main_player->score -= cl.getElapsedTime().asSeconds(); //обновляет таймер в секундах.
     }
 

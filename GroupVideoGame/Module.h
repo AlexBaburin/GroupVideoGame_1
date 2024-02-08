@@ -25,7 +25,7 @@ public:
 	static Coordinates player_position;
 	Texture player_texture;
 
-	virtual void UpdatePosition() = 0;
+	virtual void UpdatePosition(RenderWindow&, Event&);
 	virtual bool CheckPosition() = 0;
 	void UpdateScore();
 	int UpdateLives(int delta_health);
@@ -37,7 +37,7 @@ public:
 	{
 		player_texture.loadFromImage.loadFromFile("player_1.png");
 	}
-	void UpdatePosition() override;
+	void UpdatePosition(RenderWindow&, Event&);
 	bool CheckPosition() override; //проверка позиции объекта
 };
 bool Player1::CheckPosition()
@@ -81,28 +81,54 @@ public:
 class Game
 {
 public:
-	void Graphics(Player* player, Map* map[]); //отрисовка игрока, карты, здоровья и т.д.
+	void Graphics(RenderWindow& window, Player* player, Map* map[]); //отрисовка игрока, карты, здоровья и т.д.
 	bool Is_player_dead(int hp, int score);
 };
 
 class Map
 {
+protected:
+	Texture* map_texture, *objects_texture, *collisions_texture;
 public:
-	Texture map_texture;
 	RectangleShape objects[OBJ_NUMBER];
-	virtual void draw_map(); //отрисовка карты
-	//рандомная генерация оцчов и врагов
+	virtual void draw_map(RenderWindow& window) = 0; //отрисовка карты
+	//рандомная генерация очков и врагов
+	virtual void GenerateRandomScores();
+	void GenerateEnemy();
 };
 
 class Map1 : public Map //статическое движение
 {
 public:
-
+	Map1()
+	{
+		map_texture = (new Texture()); map_texture->loadFromFile("");
+		objects_texture = (new Texture()); objects_texture->loadFromFile("");
+		collisions_texture = (new Texture()); collisions_texture->loadFromFile("");
+	}
+	void draw_map(RenderWindow& window)
+	{
+		window.draw(map_texture);
+		window.draw(objects_texture);
+		window.draw(collisions_texture);
+	}
+	void GenerateRandomScores();
 };
 class Map2 : public Map //векторное движение
 {
 public:
-
+	Map2()
+	{
+		map_texture = (new Texture()); map_texture->loadFromFile("");
+		objects_texture = (new Texture()); objects_texture->loadFromFile("");
+		collisions_texture = (new Texture()); collisions_texture->loadFromFile("");
+	}
+	void draw_map(RenderWindow& window)
+	{
+		window.draw(map_texture);
+		window.draw(objects_texture);
+		window.draw(collisions_texture);
+	}
 };
 class Map3 : public Map //невидимка
 {
