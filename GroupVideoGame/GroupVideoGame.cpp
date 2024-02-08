@@ -1,6 +1,9 @@
 ﻿#include <iostream>
 #include "Module.h"
+#include "Graphics.h"
 using namespace sf;
+
+#define SPEED 1
 
 int Player::UpdateLives(int delta_health) //delta_health: положительное - исцеление, отрицательное - урон
 {
@@ -9,15 +12,136 @@ int Player::UpdateLives(int delta_health) //delta_health: положительн
 }
 void Player::UpdateScore()
 {
-    score += value; //value описать
+    score += 10; //value описать
+}
+bool Player::IsPlayerOutOfBounds()
+{
+    if (player_position.x > 0 && player_position.x < RESOLUTION && player_position.y > 0 && player_position.y < RESOLUTION)
+        return false;
+    return true;
 }
 void Player1::UpdatePosition(RenderWindow& window, Event& event)
 {
     while (window.pollEvent(event))
     {
-
+        if (event.type == Keyboard::isKeyPressed(Keyboard::Up) || event.type == Keyboard::isKeyPressed(Keyboard::W))
+        {
+            player_position.y -= SPEED;
+        }
+        else if (event.type == Keyboard::isKeyPressed(Keyboard::Down) || event.type == Keyboard::isKeyPressed(Keyboard::S))
+        {
+            player_position.y += SPEED;
+        }
+        else if (event.type == Keyboard::isKeyPressed(Keyboard::Left) || event.type == Keyboard::isKeyPressed(Keyboard::A))
+        {
+            player_position.x -= SPEED;
+        }
+        else if (event.type == Keyboard::isKeyPressed(Keyboard::Right) || event.type == Keyboard::isKeyPressed(Keyboard::D))
+        {
+            player_position.x += SPEED;
+        }
+    }
+    if (IsPlayerOutOfBounds())
+    {
+        UpdateLives(-1000);
     }
 }
+void Player2::UpdatePosition(RenderWindow& window, Event& event)
+{
+    Event prev_event;
+    while (window.pollEvent(event))
+    {
+        if (event.type == Keyboard::isKeyPressed(Keyboard::Up) || event.type == Keyboard::isKeyPressed(Keyboard::W))
+        {
+            prev_event = event;
+        }
+        else if (event.type == Keyboard::isKeyPressed(Keyboard::Down) || event.type == Keyboard::isKeyPressed(Keyboard::S))
+        {
+            prev_event = event;
+        }
+        else if (event.type == Keyboard::isKeyPressed(Keyboard::Left) || event.type == Keyboard::isKeyPressed(Keyboard::A))
+        {
+            prev_event = event;
+        }
+        else if (event.type == Keyboard::isKeyPressed(Keyboard::Right) || event.type == Keyboard::isKeyPressed(Keyboard::D))
+        {
+            prev_event = event;
+        }
+    }
+    if (prev_event.type == Keyboard::isKeyPressed(Keyboard::Up) || prev_event.type == Keyboard::isKeyPressed(Keyboard::W))
+    {
+        player_position.y -= SPEED;
+    }
+    else if (prev_event.type == Keyboard::isKeyPressed(Keyboard::Down) || prev_event.type == Keyboard::isKeyPressed(Keyboard::S))
+    {
+        player_position.y += SPEED;
+    }
+    else if (prev_event.type == Keyboard::isKeyPressed(Keyboard::Left) || prev_event.type == Keyboard::isKeyPressed(Keyboard::A))
+    {
+        player_position.x -= SPEED;
+    }
+    else if (prev_event.type == Keyboard::isKeyPressed(Keyboard::Right) || prev_event.type == Keyboard::isKeyPressed(Keyboard::D))
+    {
+        player_position.x += SPEED;
+    }
+    if (IsPlayerOutOfBounds())
+    {
+        UpdateLives(-1000);
+    }
+}
+void Player3::UpdatePosition(RenderWindow& window, Event& event)
+{
+    while (window.pollEvent(event))
+    {
+        if (event.type == Keyboard::isKeyPressed(Keyboard::Up) || event.type == Keyboard::isKeyPressed(Keyboard::W))
+        {
+            player_position.y -= SPEED;
+        }
+        else if (event.type == Keyboard::isKeyPressed(Keyboard::Down) || event.type == Keyboard::isKeyPressed(Keyboard::S))
+        {
+            player_position.y += SPEED;
+        }
+        else if (event.type == Keyboard::isKeyPressed(Keyboard::Left) || event.type == Keyboard::isKeyPressed(Keyboard::A))
+        {
+            player_position.x -= SPEED;
+        }
+        else if (event.type == Keyboard::isKeyPressed(Keyboard::Right) || event.type == Keyboard::isKeyPressed(Keyboard::D))
+        {
+            player_position.x += SPEED;
+        }
+    }
+    if (IsPlayerOutOfBounds())
+    {
+        UpdateLives(-1000);
+    }
+}
+void Player4::UpdatePosition(RenderWindow& window, Event& event)
+{
+    while (window.pollEvent(event))
+    {
+        if (event.type == Keyboard::isKeyPressed(Keyboard::Up) || event.type == Keyboard::isKeyPressed(Keyboard::W))
+        {
+            player_position.y -= SPEED;
+        }
+        else if (event.type == Keyboard::isKeyPressed(Keyboard::Down) || event.type == Keyboard::isKeyPressed(Keyboard::S))
+        {
+            player_position.y += SPEED;
+        }
+        else if (event.type == Keyboard::isKeyPressed(Keyboard::Left) || event.type == Keyboard::isKeyPressed(Keyboard::A))
+        {
+            player_position.x -= SPEED;
+        }
+        else if (event.type == Keyboard::isKeyPressed(Keyboard::Right) || event.type == Keyboard::isKeyPressed(Keyboard::D))
+        {
+            player_position.x += SPEED;
+        }
+    }
+    if (IsPlayerOutOfBounds())
+    {
+        UpdateLives(-1000);
+    }
+}
+
 bool Game::Is_player_dead(int hp, int score)
 {
     if (hp <= 0 || score <= 0)

@@ -3,9 +3,11 @@
 #include <SFML/Audio.hpp>
 #include <chrono>
 
+using namespace sf;
+
 #define DIMENSIONS 2
 #define OBJ_NUMBER 5
-#define RESOLUTION 800
+#define RESOLUTION 1200
 #define PLAYER_HIGHT 40
 #define PLAYER_WIDTH 20
 #define SIZE_OF_THORNS 50
@@ -25,19 +27,20 @@ public:
 	static Coordinates player_position;
 	Texture player_texture;
 
-	virtual void UpdatePosition(RenderWindow&, Event&);
+	virtual void UpdatePosition(RenderWindow& window, Event& event) = 0;
 	virtual bool CheckPosition() = 0;
 	void UpdateScore();
 	int UpdateLives(int delta_health);
+	bool IsPlayerOutOfBounds();
 };
 class Player1 : public Player //статическое движение
 {
 public:
 	Player1()
 	{
-		player_texture.loadFromImage.loadFromFile("player_1.png");
+		player_texture.loadFromFile("player_1.png");
 	}
-	void UpdatePosition(RenderWindow&, Event&);
+	void UpdatePosition(RenderWindow& window, Event& event);
 	bool CheckPosition() override; //проверка позиции объекта
 };
 bool Player1::CheckPosition()
@@ -50,31 +53,31 @@ bool Player1::CheckPosition()
 class Player2 : public Player //векторное движение
 {
 public:
-	void UpdatePosition();
+	void UpdatePosition(RenderWindow& window, Event& event);
 	bool CheckPosition() override;
 	Player2()
 	{
-		player_texture.loadFromImage.loadFromFile("player_2.png");
+		player_texture.loadFromFile("player_2.png");
 	}
 };
 class Player3 : public Player //невидимка
 {
 public:
-	void UpdatePosition();
+	void UpdatePosition(RenderWindow& window, Event& event);
 	bool CheckPosition() override;
 	Player3()
 	{
-		player_texture.loadFromImage.loadFromFile("player_3.png");
+		player_texture.loadFromFile("player_3.png");
 	}
 };
 class Player4 : public Player //враги
 {
 public:
-	void UpdatePosition();
+	void UpdatePosition(RenderWindow& window, Event& event);
 	bool CheckPosition() override;
 	Player4()
 	{
-		player_texture.loadFromImage.loadFromFile("player_4.png");
+		player_texture.loadFromFile("player_4.png");
 	}
 };
 
@@ -88,7 +91,7 @@ public:
 class Map
 {
 protected:
-	Texture* map_texture, *objects_texture, *collisions_texture;
+	Sprite map_sprite, objects_sprite, collisions_sprite;
 public:
 	RectangleShape objects[OBJ_NUMBER];
 	virtual void draw_map(RenderWindow& window) = 0; //отрисовка карты
@@ -102,15 +105,22 @@ class Map1 : public Map //статическое движение
 public:
 	Map1()
 	{
-		map_texture = (new Texture()); map_texture->loadFromFile("");
-		objects_texture = (new Texture()); objects_texture->loadFromFile("");
-		collisions_texture = (new Texture()); collisions_texture->loadFromFile("");
+		Texture map_texture;
+		map_texture.loadFromFile("Map1.png");
+		Texture objects_texture;
+		objects_texture.loadFromFile("");
+		Texture collisions_texture;
+		collisions_texture.loadFromFile("");
+		map_sprite.setTexture(map_texture);
+		objects_sprite.setTexture(objects_texture);
+		collisions_sprite.setTexture(collisions_texture);
+		map_sprite.setPosition(0, RESOLUTION / 2);
 	}
 	void draw_map(RenderWindow& window)
 	{
-		window.draw(map_texture);
-		window.draw(objects_texture);
-		window.draw(collisions_texture);
+		window.draw(map_sprite);
+		window.draw(objects_sprite);
+		window.draw(collisions_sprite);
 	}
 	void GenerateRandomScores();
 };
@@ -119,26 +129,66 @@ class Map2 : public Map //векторное движение
 public:
 	Map2()
 	{
-		map_texture = (new Texture()); map_texture->loadFromFile("");
-		objects_texture = (new Texture()); objects_texture->loadFromFile("");
-		collisions_texture = (new Texture()); collisions_texture->loadFromFile("");
+		Texture map_texture;
+		map_texture.loadFromFile("Map2.png");
+		Texture objects_texture;
+		objects_texture.loadFromFile("");
+		Texture collisions_texture;
+		collisions_texture.loadFromFile("");
+		map_sprite.setTexture(map_texture);
+		objects_sprite.setTexture(objects_texture);
+		collisions_sprite.setTexture(collisions_texture);
 	}
 	void draw_map(RenderWindow& window)
 	{
-		window.draw(map_texture);
-		window.draw(objects_texture);
-		window.draw(collisions_texture);
+		window.draw(map_sprite);
+		window.draw(objects_sprite);
+		window.draw(collisions_sprite);
 	}
 };
 class Map3 : public Map //невидимка
 {
 public:
-
+	Map3()
+	{
+		Texture map_texture;
+		map_texture.loadFromFile("Map3.png");
+		Texture objects_texture;
+		objects_texture.loadFromFile("");
+		Texture collisions_texture;
+		collisions_texture.loadFromFile("");
+		map_sprite.setTexture(map_texture);
+		objects_sprite.setTexture(objects_texture);
+		collisions_sprite.setTexture(collisions_texture);
+	}
+	void draw_map(RenderWindow& window)
+	{
+		window.draw(map_sprite);
+		window.draw(objects_sprite);
+		window.draw(collisions_sprite);
+	}
 };
 class Map4 : public Map //враги
 {
 public:
-
+	Map4()
+	{
+		Texture map_texture;
+		map_texture.loadFromFile("Map4.png");
+		Texture objects_texture;
+		objects_texture.loadFromFile("");
+		Texture collisions_texture;
+		collisions_texture.loadFromFile("");
+		map_sprite.setTexture(map_texture);
+		objects_sprite.setTexture(objects_texture);
+		collisions_sprite.setTexture(collisions_texture);
+	}
+	void draw_map(RenderWindow& window)
+	{
+		window.draw(map_sprite);
+		window.draw(objects_sprite);
+		window.draw(collisions_sprite);
+	}
 };
 int Player::hp = 100;
 Coordinates Player::player_position = { 0, 0 };
