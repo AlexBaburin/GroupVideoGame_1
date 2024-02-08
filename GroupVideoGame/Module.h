@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include <chrono>
 
 using namespace sf;
 
@@ -94,7 +93,7 @@ public:
 	Map1()
 	{
 		map_texture.loadFromFile("Map1.png");
-		objects_texture.loadFromFile("");
+		objects_texture.loadFromFile("bonus.png");
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
 		objects_sprite.setTexture(objects_texture);
@@ -183,7 +182,7 @@ public:
 	Coordinates player_position;
 public:
 	virtual void Fight(Player* player) = 0;
-	virtual void GenerateRandomPosition() = 0;
+	virtual void GenerateRandomPosition(Map* map[]) = 0;
 };
 class Warrior : public Enemy
 {
@@ -198,7 +197,7 @@ public:
 		time_of_frame = 6;
 	}
 	void Fight(Player* player);
-	void GenerateRandomPosition();
+	void GenerateRandomPosition(Map* map[]);
 	bool CheckPosition();
 };
 

@@ -35,13 +35,10 @@ bool Warrior::CheckPosition()
             return true;
     return false;
 }
-void Warrior::GenerateRandomPosition()
+void Warrior::GenerateRandomPosition(Map* map[])
 {
-    do
-    {
-        player_position.x = rand() % (RESOLUTION / 2) + RESOLUTION;
-        player_position.y = rand() % (RESOLUTION / 2) + PLAYER_HIGHT;
-    } while (!CheckPosition());
+    player_position.x = rand() % (RESOLUTION / 2 - PLAYER_WIDTH) + map[3]->position.x;
+    player_position.y = rand() % (RESOLUTION / 2 - PLAYER_HIGHT) + map[3]->position.y;
 }
 
 bool Player1::CheckPosition()
@@ -246,6 +243,7 @@ int main()
     Player* Main_player = new Player1();
     Enemy* enemy = new Warrior();
     GenerateRandomPosition(Main_player, map); // генерирование случайной позиции в начальной локации
+    enemy->GenerateRandomPosition(map); // генерирование случайной позиции врагов
     Clock cl, limiter;
     Event event;
     Image icon;
