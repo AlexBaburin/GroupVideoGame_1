@@ -48,6 +48,6 @@ void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* ene
 	draw_enemy(enemy, window);
 	draw_bonuses(window, map);
 	draw_lives(player, delta_health, window);
-	draw_score(player, window);
+	//draw_score(player, window);
 	window.display();
 }
