@@ -9,6 +9,39 @@ int Player::hp = 100;
 Coordinates Player::player_position = { 0, 0 };
 int Player::score = 100;
 
+void Warrior::Fight(Player* player)
+{
+    if (time_of_frame > 6)
+        time_of_frame -= 6;
+    else
+        time_of_frame += 0.005;
+    if ((player->player_position.x - player_position.x <= field_of_sight) &&
+        (player->player_position.y - player_position.y <= field_of_sight))
+    {
+        enemy_sprite.setTextureRect(IntRect(PLAYER_WIDTH * time_of_frame + PLAYER_WIDTH, PLAYER_HIGHT, PLAYER_WIDTH, PLAYER_HIGHT));
+        if ((player->player_position.x - player_position.x <= field_of_sight / 10) &&
+            (player->player_position.y - player_position.y <= field_of_sight / 10) && time_of_frame == 3)
+            player->UpdateLives(-damage);
+    }
+    else
+        enemy_sprite.setTextureRect(IntRect(PLAYER_WIDTH * time_of_frame + PLAYER_WIDTH, PLAYER_HIGHT, PLAYER_WIDTH, PLAYER_HIGHT));
+}
+bool Warrior::CheckPosition()
+{
+    if ((player_position.x >= RESOLUTION / 2) && (player_position.x <= RESOLUTION - PLAYER_WIDTH))
+        if ((player_position.y <= RESOLUTION / 2 - PLAYER_HIGHT))
+            return true;
+    return false;
+}
+void Warrior::GenerateRandomPosition()
+{
+    do
+    {
+        player_position.x = rand() % (RESOLUTION / 2) + RESOLUTION;
+        player_position.y = rand() % (RESOLUTION / 2) + PLAYER_HIGHT;
+    } while (!CheckPosition());
+}
+
 bool Player1::CheckPosition()
 {
     if ((player_position.x <= RESOLUTION / 2) && player_position.y >= RESOLUTION / 2 - PLAYER_HIGHT)
@@ -174,6 +207,7 @@ int main()
     Game game;
     Map* map[NUMBER_OF_LOCATIONS] = { new Map1(), new Map2(), new Map3(), new Map4() }; //указатель на количество локаций
     Player* Main_player = new Player1();
+    Enemy* enemy = new Warrior();
     GenerateRandomPosition(Main_player); // геенерирование случайной позиции в начальной локации
     Clock cl;
     Event event;
@@ -193,7 +227,7 @@ int main()
             //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
         }
         //Main_player->UpdateScore();
-        game.Graphics(window, Main_player, map); // отрисовка карты и игрока
+        game.Graphics(window, Main_player, map, enemy); // отрисовка карты и игрока
         Main_player->score -= cl.getElapsedTime().asSeconds(); //обновляет таймер в секундах.
     }
 

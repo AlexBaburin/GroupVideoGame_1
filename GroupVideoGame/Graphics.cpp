@@ -2,6 +2,13 @@
 #include "Graphics.h"
 using namespace sf;
 
+void draw_enemy(Enemy* enemy, RenderWindow& window)
+{
+	Sprite enemy_sprite(enemy->enemy_texture);
+	enemy_sprite.setPosition(enemy->player_position.x, enemy->player_position.y);
+	enemy_sprite.setScale(1, 1);
+	window.draw(enemy_sprite);
+}
 
 void draw_player(Player* player, RenderWindow& window)
 {
@@ -25,12 +32,13 @@ void draw_full_map(RenderWindow& window, Map* map[])
 		map[i]->draw_map(window);
 }
 
-void Game::Graphics(RenderWindow& window, Player* player, Map* map[])
+void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy)
 {
 	window.clear();
 	int delta_health = 0;
 	draw_full_map(window, map); //отрисовка всей карты
 	draw_player(player, window);
+	draw_enemy(enemy, window);
 	draw_lives(player, delta_health, window);
 	draw_score(player, window);
 	window.display();

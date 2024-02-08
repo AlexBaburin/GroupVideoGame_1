@@ -171,9 +171,6 @@ public:
 		window.draw(collisions_sprite);
 	}
 };
-int Player::hp = 100;
-Coordinates Player::player_position = { 0, 0 };
-int Player::score = 100;
 class Enemy
 {
 public:
@@ -187,61 +184,36 @@ public:
 public:
 	virtual void Fight(Player* player) = 0;
 	virtual void GenerateRandomPosition() = 0;
-	bool CheckPosition();
 };
 class Warrior : public Enemy
 {
-private:
-	int Enemy::hp = 100;
-	int Enemy::damage = 10;
-	int Enemy::field_of_sight = 100;
-	double Enemy::time_of_frame = 6;
 public:
 	Warrior()
 	{
 		enemy_texture.loadFromFile("");
 		enemy_sprite.setTexture(enemy_texture);
+		hp = 100;
+		damage = 10;
+		field_of_sight = 100;
+		time_of_frame = 6;
 	}
 	void Fight(Player* player);
 	void GenerateRandomPosition();
+	bool CheckPosition();
 };
-void Warrior::Fight(Player* player)
-{
-	if (time_of_frame > 6)
-		time_of_frame -= 6;
-	else
-		time_of_frame += 0.005;
-	if ((player->player_position.x - Enemy::player_position.x <= Enemy::field_of_sight) &&
-		(player->player_position.y - Enemy::player_position.y <= Enemy::field_of_sight))
-	{
-		enemy_sprite.setTextureRect(IntRect(PLAYER_WIDTH * time_of_frame + PLAYER_WIDTH, PLAYER_HIGHT, PLAYER_WIDTH, PLAYER_HIGHT));
-		if ((player->player_position.x - Enemy::player_position.x <= Enemy::field_of_sight / 10) &&
-			(player->player_position.y - Enemy::player_position.y <= Enemy::field_of_sight / 10) && time_of_frame == 3)
-			player->UpdateLives(-Enemy::damage);
-	}
-	else
-		enemy_sprite.setTextureRect(IntRect(PLAYER_WIDTH * time_of_frame + PLAYER_WIDTH, PLAYER_HIGHT, PLAYER_WIDTH, PLAYER_HIGHT));
-}
-bool Warrior::Enemy::CheckPosition()
-{
-	if ((player_position.x >= RESOLUTION / 2) && (player_position.x <= RESOLUTION - PLAYER_WIDTH))
-		if ((player_position.y <= RESOLUTION / 2 - PLAYER_HIGHT))
-			return true;
-	return false;
-}
-void Warrior::GenerateRandomPosition()
-{
-	do
-	{
-		Enemy::player_position.x = rand() % (RESOLUTION / 2) + RESOLUTION;
-		Enemy::player_position.y = rand() % (RESOLUTION / 2) + PLAYER_HIGHT;
-	} while (!Enemy::CheckPosition());
-}
-class Witcher : public Enemy
-{
 
-};
-class Bomber : public Enemy
-{
+//class Witcher : public Enemy
+//{
+//
+//};
+//class Bomber : public Enemy
+//{
+//
+//};
 
+class Game
+{
+public:
+	void Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy);
+	bool Is_player_dead(int hp, int score);
 };
