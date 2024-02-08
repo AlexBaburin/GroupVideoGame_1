@@ -240,6 +240,32 @@ int main()
         map[i]->position.y = map_randomizer[j][1];
         map_randomizer.erase(map_randomizer.begin() + j);
     }
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < map[i]->objects_sprite.size(); j++)
+        {
+            map[i]->objects_sprite[j].setPosition(map[i]->position.x + (rand() % 
+                (RESOLUTION / 2 - map[i]->objects_sprite[j].getTexture()->getSize().x)), map[i]->position.y + (rand() %
+                    (RESOLUTION / 2 - map[i]->objects_sprite[j].getTexture()->getSize().y)));
+            for (int k = 0; k < j; ++k)
+            {
+                FloatRect rect1(map[i]->objects_sprite[j].getPosition().x - map[i]->objects_sprite[j].getTexture()->getSize().x, 
+                    map[i]->objects_sprite[j].getPosition().y - map[i]->objects_sprite[j].getTexture()->getSize().x,
+                    map[i]->objects_sprite[j].getTexture()->getSize().x * 3,
+                    map[i]->objects_sprite[j].getTexture()->getSize().y + map[i]->objects_sprite[j].getTexture()->getSize().x * 2);
+                FloatRect rect2(map[i]->objects_sprite[k].getPosition().x - map[i]->objects_sprite[k].getTexture()->getSize().x,
+                    map[i]->objects_sprite[k].getPosition().y - map[i]->objects_sprite[k].getTexture()->getSize().x,
+                    map[i]->objects_sprite[k].getTexture()->getSize().x * 3,
+                    map[i]->objects_sprite[k].getTexture()->getSize().y + map[i]->objects_sprite[k].getTexture()->getSize().x * 2);
+
+                if (rect1.intersects(rect2))
+                {
+                    j--;
+                    break;
+                }
+            }
+        }
+    }
     Player* Main_player = new Player1();
     Enemy* enemy = new Warrior();
     GenerateRandomPosition(Main_player, map); // генерирование случайной позиции в начальной локации

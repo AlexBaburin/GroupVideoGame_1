@@ -76,9 +76,10 @@ public:
 class Map
 {
 protected:
-	Sprite map_sprite, objects_sprite, collisions_sprite;
+	Sprite map_sprite, collisions_sprite;
 	Texture map_texture, objects_texture, collisions_texture;
 public:
+	std::vector<Sprite> objects_sprite;
 	Coordinates position;
 	RectangleShape objects[OBJ_NUMBER];
 	virtual void draw_map(RenderWindow& window) = 0; //отрисовка карты
@@ -96,15 +97,18 @@ public:
 		objects_texture.loadFromFile("bonus.png");
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
-		objects_sprite.setTexture(objects_texture);
+		Sprite tmp;
+		tmp.setTexture(objects_texture);
+		for (int i = 0; i < (rand() % OBJ_NUMBER + 1); i++)
+		{
+			objects_sprite.push_back(tmp);
+		}
 		collisions_sprite.setTexture(collisions_texture);
 	}
 	void draw_map(RenderWindow& window)
 	{
 		map_sprite.setPosition(position.x, position.y);
 		window.draw(map_sprite);
-		//window.draw(objects_sprite);
-		//window.draw(collisions_sprite);
 	}
 	//void GenerateRandomScores();
 };
@@ -114,18 +118,21 @@ public:
 	Map2()
 	{
 		map_texture.loadFromFile("Map2.png");
-		objects_texture.loadFromFile("");
+		objects_texture.loadFromFile("bonus.png");
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
-		objects_sprite.setTexture(objects_texture);
+		Sprite tmp;
+		tmp.setTexture(objects_texture);
+		for (int i = 0; i < (rand() % OBJ_NUMBER + 1); i++)
+		{
+			objects_sprite.push_back(tmp);
+		}
 		collisions_sprite.setTexture(collisions_texture);
 	}
 	void draw_map(RenderWindow& window)
 	{
 		map_sprite.setPosition(position.x, position.y);
 		window.draw(map_sprite);
-		window.draw(objects_sprite);
-		window.draw(collisions_sprite);
 	}
 	//void GenerateRandomScores();
 };
@@ -135,18 +142,21 @@ public:
 	Map3()
 	{
 		map_texture.loadFromFile("Map3.png");
-		objects_texture.loadFromFile("");
+		objects_texture.loadFromFile("bonus.png");
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
-		objects_sprite.setTexture(objects_texture);
+		Sprite tmp;
+		tmp.setTexture(objects_texture);
+		for (int i = 0; i < (rand() % OBJ_NUMBER + 1); i++)
+		{
+			objects_sprite.push_back(tmp);
+		}
 		collisions_sprite.setTexture(collisions_texture);
 	}
 	void draw_map(RenderWindow& window)
 	{
 		map_sprite.setPosition(position.x, position.y);
 		window.draw(map_sprite);
-		window.draw(objects_sprite);
-		window.draw(collisions_sprite);
 	}
 	//void GenerateRandomScores();
 };
@@ -159,15 +169,18 @@ public:
 		objects_texture.loadFromFile("");
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
-		objects_sprite.setTexture(objects_texture);
+		Sprite tmp;
+		tmp.setTexture(objects_texture);
+		for (int i = 0; i < (rand() % OBJ_NUMBER + 1); i++)
+		{
+			objects_sprite.push_back(tmp);
+		}
 		collisions_sprite.setTexture(collisions_texture);
 	}
 	void draw_map(RenderWindow& window)
 	{
 		map_sprite.setPosition(position.x, position.y);
 		window.draw(map_sprite);
-		window.draw(objects_sprite);
-		window.draw(collisions_sprite);
 	}
 };
 class Enemy

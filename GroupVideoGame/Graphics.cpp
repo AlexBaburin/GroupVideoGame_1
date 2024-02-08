@@ -10,6 +10,13 @@ void draw_enemy(Enemy* enemy, RenderWindow& window)
 	window.draw(enemy_sprite);
 }
 
+void draw_bonuses(RenderWindow& window, Map* map[])
+{
+	for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
+		for (int j = 0; j < map[i]->objects_sprite.size(); j++)
+			window.draw(map[i]->objects_sprite[j]);
+}
+
 void draw_player(Player* player, RenderWindow& window)
 {
 	Sprite player_sprite(player->player_texture);
@@ -39,6 +46,7 @@ void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* ene
 	draw_full_map(window, map); //отрисовка всей карты
 	draw_player(player, window);
 	draw_enemy(enemy, window);
+	draw_bonuses(window, map);
 	draw_lives(player, delta_health, window);
 	draw_score(player, window);
 	window.display();
