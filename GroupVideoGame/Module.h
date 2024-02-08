@@ -78,6 +78,7 @@ class Map
 {
 protected:
 	Sprite map_sprite, objects_sprite, collisions_sprite;
+	Texture map_texture, objects_texture, collisions_texture;
 public:
 	RectangleShape objects[OBJ_NUMBER];
 	virtual void draw_map(RenderWindow& window) = 0; //отрисовка карты
@@ -91,11 +92,8 @@ class Map1 : public Map //статическое движение
 public:
 	Map1()
 	{
-		Texture map_texture;
 		map_texture.loadFromFile("Map1.png");
-		Texture objects_texture;
 		objects_texture.loadFromFile("");
-		Texture collisions_texture;
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
 		objects_sprite.setTexture(objects_texture);
@@ -104,9 +102,10 @@ public:
 	}
 	void draw_map(RenderWindow& window)
 	{
+		map_sprite.setPosition(0, RESOLUTION / 2);
 		window.draw(map_sprite);
-		window.draw(objects_sprite);
-		window.draw(collisions_sprite);
+		//window.draw(objects_sprite);
+		//window.draw(collisions_sprite);
 	}
 	//void GenerateRandomScores();
 };
@@ -115,11 +114,8 @@ class Map2 : public Map //векторное движение
 public:
 	Map2()
 	{
-		Texture map_texture;
 		map_texture.loadFromFile("Map2.png");
-		Texture objects_texture;
 		objects_texture.loadFromFile("");
-		Texture collisions_texture;
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
 		objects_sprite.setTexture(objects_texture);
@@ -127,6 +123,7 @@ public:
 	}
 	void draw_map(RenderWindow& window)
 	{
+		map_sprite.setPosition(RESOLUTION / 2, RESOLUTION / 2);
 		window.draw(map_sprite);
 		window.draw(objects_sprite);
 		window.draw(collisions_sprite);
@@ -138,11 +135,8 @@ class Map3 : public Map //невидимка
 public:
 	Map3()
 	{
-		Texture map_texture;
 		map_texture.loadFromFile("Map3.png");
-		Texture objects_texture;
 		objects_texture.loadFromFile("");
-		Texture collisions_texture;
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
 		objects_sprite.setTexture(objects_texture);
@@ -150,6 +144,7 @@ public:
 	}
 	void draw_map(RenderWindow& window)
 	{
+		map_sprite.setPosition(0, 0);
 		window.draw(map_sprite);
 		window.draw(objects_sprite);
 		window.draw(collisions_sprite);
@@ -161,11 +156,8 @@ class Map4 : public Map //враги
 public:
 	Map4()
 	{
-		Texture map_texture;
 		map_texture.loadFromFile("Map4.png");
-		Texture objects_texture;
 		objects_texture.loadFromFile("");
-		Texture collisions_texture;
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
 		objects_sprite.setTexture(objects_texture);
@@ -173,6 +165,7 @@ public:
 	}
 	void draw_map(RenderWindow& window)
 	{
+		map_sprite.setPosition(RESOLUTION / 2, 0);
 		window.draw(map_sprite);
 		window.draw(objects_sprite);
 		window.draw(collisions_sprite);

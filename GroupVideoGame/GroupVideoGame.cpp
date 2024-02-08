@@ -3,7 +3,7 @@
 #include "Graphics.h"
 using namespace sf;
 
-#define SPEED 1
+#define SPEED 5
 
 int Player::hp = 100;
 Coordinates Player::player_position = { 0, 0 };
@@ -35,19 +35,19 @@ void Player1::UpdatePosition(RenderWindow& window, Event& event)
 {
     while (window.pollEvent(event))
     {
-        if (event.type == Keyboard::isKeyPressed(Keyboard::Up) || event.type == Keyboard::isKeyPressed(Keyboard::W))
+        if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
         {
             player_position.y -= SPEED;
         }
-        else if (event.type == Keyboard::isKeyPressed(Keyboard::Down) || event.type == Keyboard::isKeyPressed(Keyboard::S))
+        else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player_position.y += SPEED;
         }
-        else if (event.type == Keyboard::isKeyPressed(Keyboard::Left) || event.type == Keyboard::isKeyPressed(Keyboard::A))
+        else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player_position.x -= SPEED;
         }
-        else if (event.type == Keyboard::isKeyPressed(Keyboard::Right) || event.type == Keyboard::isKeyPressed(Keyboard::D))
+        else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
             player_position.x += SPEED;
         }
@@ -166,7 +166,7 @@ void GenerateRandomPosition(Player* player)
     {
         player->player_position.x = rand() % (RESOLUTION / 2) - PLAYER_WIDTH;
         player->player_position.y = rand() % (RESOLUTION / 2) + RESOLUTION / 2;
-    } while (player->CheckPosition());
+    } while (!player->CheckPosition());
 }
 int main()
 {
@@ -183,9 +183,16 @@ int main()
     window.setIcon(128, 128, icon.getPixelsPtr()); //установка иконки игры (хз, поставил из своей игры, можете поменять)
     while (window.isOpen())
     {
-        Main_player->UpdatePosition(window, event); //вывод новой позиции при нажатии клавиши, проверка пересечения 
-                             //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
-        Main_player->UpdateScore();
+        while (window.pollEvent(event))
+        {
+            if (event.type == Event::Closed)
+            {
+                window.close();
+            }
+            Main_player->UpdatePosition(window, event); //вывод новой позиции при нажатии клавиши, проверка пересечения 
+            //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
+        }
+        //Main_player->UpdateScore();
         game.Graphics(window, Main_player, map); // отрисовка карты и игрока
         Main_player->score -= cl.getElapsedTime().asSeconds(); //обновляет таймер в секундах.
     }
