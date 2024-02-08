@@ -8,6 +8,7 @@ using namespace sf;
 int Player::hp = 100;
 Coordinates Player::player_position = { 0, 0 };
 int Player::score = 100;
+Keyboard::Key prev_event = Keyboard::Key::T;
 
 void Warrior::Fight(Player* player)
 {
@@ -68,6 +69,10 @@ void Player1::UpdatePosition(RenderWindow& window, Event& event)
 {
     while (window.pollEvent(event))
     {
+        if (event.type == Event::Closed)
+        {
+            window.close();
+        }
         if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
         {
             player_position.y -= SPEED;
@@ -92,39 +97,42 @@ void Player1::UpdatePosition(RenderWindow& window, Event& event)
 }
 void Player2::UpdatePosition(RenderWindow& window, Event& event)
 {
-    Event prev_event;
     while (window.pollEvent(event))
     {
-        if (event.type == Keyboard::isKeyPressed(Keyboard::Up) || event.type == Keyboard::isKeyPressed(Keyboard::W))
+        if (event.type == Event::Closed)
         {
-            prev_event = event;
+            window.close();
         }
-        else if (event.type == Keyboard::isKeyPressed(Keyboard::Down) || event.type == Keyboard::isKeyPressed(Keyboard::S))
+        if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
         {
-            prev_event = event;
+            prev_event = Keyboard::Up;
         }
-        else if (event.type == Keyboard::isKeyPressed(Keyboard::Left) || event.type == Keyboard::isKeyPressed(Keyboard::A))
+        else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
-            prev_event = event;
+            prev_event = Keyboard::Down;
         }
-        else if (event.type == Keyboard::isKeyPressed(Keyboard::Right) || event.type == Keyboard::isKeyPressed(Keyboard::D))
+        else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
-            prev_event = event;
+            prev_event = Keyboard::Left;
+        }
+        else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
+        {
+            prev_event = Keyboard::Right;
         }
     }
-    if (prev_event.type == Keyboard::isKeyPressed(Keyboard::Up) || prev_event.type == Keyboard::isKeyPressed(Keyboard::W))
+    if (prev_event == Keyboard::Up)
     {
         player_position.y -= SPEED;
     }
-    else if (prev_event.type == Keyboard::isKeyPressed(Keyboard::Down) || prev_event.type == Keyboard::isKeyPressed(Keyboard::S))
+    else if (prev_event == Keyboard::Down)
     {
         player_position.y += SPEED;
     }
-    else if (prev_event.type == Keyboard::isKeyPressed(Keyboard::Left) || prev_event.type == Keyboard::isKeyPressed(Keyboard::A))
+    else if (prev_event == Keyboard::Left)
     {
         player_position.x -= SPEED;
     }
-    else if (prev_event.type == Keyboard::isKeyPressed(Keyboard::Right) || prev_event.type == Keyboard::isKeyPressed(Keyboard::D))
+    else if (prev_event == Keyboard::Right)
     {
         player_position.x += SPEED;
     }
@@ -137,19 +145,23 @@ void Player3::UpdatePosition(RenderWindow& window, Event& event)
 {
     while (window.pollEvent(event))
     {
-        if (event.type == Keyboard::isKeyPressed(Keyboard::Up) || event.type == Keyboard::isKeyPressed(Keyboard::W))
+        if (event.type == Event::Closed)
+        {
+            window.close();
+        }
+        if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
         {
             player_position.y -= SPEED;
         }
-        else if (event.type == Keyboard::isKeyPressed(Keyboard::Down) || event.type == Keyboard::isKeyPressed(Keyboard::S))
+        else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player_position.y += SPEED;
         }
-        else if (event.type == Keyboard::isKeyPressed(Keyboard::Left) || event.type == Keyboard::isKeyPressed(Keyboard::A))
+        else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player_position.x -= SPEED;
         }
-        else if (event.type == Keyboard::isKeyPressed(Keyboard::Right) || event.type == Keyboard::isKeyPressed(Keyboard::D))
+        else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
             player_position.x += SPEED;
         }
@@ -163,19 +175,23 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event)
 {
     while (window.pollEvent(event))
     {
-        if (event.type == Keyboard::isKeyPressed(Keyboard::Up) || event.type == Keyboard::isKeyPressed(Keyboard::W))
+        if (event.type == Event::Closed)
+        {
+            window.close();
+        }
+        if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
         {
             player_position.y -= SPEED;
         }
-        else if (event.type == Keyboard::isKeyPressed(Keyboard::Down) || event.type == Keyboard::isKeyPressed(Keyboard::S))
+        else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player_position.y += SPEED;
         }
-        else if (event.type == Keyboard::isKeyPressed(Keyboard::Left) || event.type == Keyboard::isKeyPressed(Keyboard::A))
+        else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player_position.x -= SPEED;
         }
-        else if (event.type == Keyboard::isKeyPressed(Keyboard::Right) || event.type == Keyboard::isKeyPressed(Keyboard::D))
+        else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
             player_position.x += SPEED;
         }
@@ -201,6 +217,7 @@ void GenerateRandomPosition(Player* player)
         player->player_position.y = rand() % (RESOLUTION / 2) + RESOLUTION / 2;
     } while (!player->CheckPosition());
 }
+
 int main()
 {
     srand(time(NULL));
@@ -209,7 +226,7 @@ int main()
     Player* Main_player = new Player1();
     Enemy* enemy = new Warrior();
     GenerateRandomPosition(Main_player); // геенерирование случайной позиции в начальной локации
-    Clock cl;
+    Clock cl, limiter;
     Event event;
     Image icon;
     RenderWindow window(VideoMode(RESOLUTION, RESOLUTION), "Video game");
@@ -217,14 +234,35 @@ int main()
     window.setIcon(128, 128, icon.getPixelsPtr()); //установка иконки игры (хз, поставил из своей игры, можете поменять)
     while (window.isOpen())
     {
-        while (window.pollEvent(event))
+        limiter.restart();
+        while (limiter.getElapsedTime().asMilliseconds() <= 10)
         {
-            if (event.type == Event::Closed)
-            {
-                window.close();
-            }
-            Main_player->UpdatePosition(window, event); //вывод новой позиции при нажатии клавиши, проверка пересечения 
-            //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
+        }
+        Main_player->UpdatePosition(window, event); //вывод новой позиции при нажатии клавиши, проверка пересечения 
+        //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
+        if (Main_player->player_position.x < RESOLUTION / 2 && Main_player->player_position.y > RESOLUTION / 2 &&
+            !dynamic_cast<Player1*>(Main_player))
+        {
+            delete Main_player;
+            Main_player = new Player1;
+        }
+        if (Main_player->player_position.x > RESOLUTION / 2 && Main_player->player_position.y > RESOLUTION / 2 &&
+            !dynamic_cast<Player2*>(Main_player))
+        {
+            delete Main_player;
+            Main_player = new Player2;
+        }
+        if (Main_player->player_position.x < RESOLUTION / 2 && Main_player->player_position.y < RESOLUTION / 2 &&
+            !dynamic_cast<Player3*>(Main_player))
+        {
+            delete Main_player;
+            Main_player = new Player3;
+        }
+        if (Main_player->player_position.x > RESOLUTION / 2 && Main_player->player_position.y < RESOLUTION / 2 &&
+            !dynamic_cast<Player4*>(Main_player))
+        {
+            delete Main_player;
+            Main_player = new Player4;
         }
         //Main_player->UpdateScore();
         game.Graphics(window, Main_player, map, enemy); // отрисовка карты и игрока

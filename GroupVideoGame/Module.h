@@ -47,30 +47,30 @@ class Player2 : public Player //векторное движение
 {
 public:
 	void UpdatePosition(RenderWindow& window, Event& event);
-	bool CheckPosition();
+	bool CheckPosition() { return true; }
 	Player2()
 	{
-		player_texture.loadFromFile("player_2.png");
+		player_texture.loadFromFile("player_1.png");
 	}
 };
 class Player3 : public Player //невидимка
 {
 public:
 	void UpdatePosition(RenderWindow& window, Event& event);
-	bool CheckPosition();
+	bool CheckPosition() { return true; }
 	Player3()
 	{
-		player_texture.loadFromFile("player_3.png");
+		player_texture.loadFromFile("player_1.png");
 	}
 };
 class Player4 : public Player //враги
 {
 public:
 	void UpdatePosition(RenderWindow& window, Event& event);
-	bool CheckPosition();
+	bool CheckPosition() { return true; }
 	Player4()
 	{
-		player_texture.loadFromFile("player_4.png");
+		player_texture.loadFromFile("player_1.png");
 	}
 };
 
