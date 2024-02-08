@@ -5,6 +5,17 @@ using namespace sf;
 
 #define SPEED 1
 
+int Player::hp = 100;
+Coordinates Player::player_position = { 0, 0 };
+int Player::score = 100;
+
+bool Player1::CheckPosition()
+{
+    if ((player_position.x <= RESOLUTION / 2) && player_position.y >= RESOLUTION / 2 - PLAYER_HIGHT)
+        if ((player_position.x >= SIZE_OF_THORNS) && (player_position.y <= RESOLUTION - SIZE_OF_THORNS))
+            return true;
+    return false;
+}
 int Player::UpdateLives(int delta_health) //delta_health: положительное - исцеление, отрицательное - урон
 {
     hp += delta_health;

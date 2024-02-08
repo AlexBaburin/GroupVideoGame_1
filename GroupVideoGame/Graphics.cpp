@@ -24,7 +24,7 @@ void draw_full_map(RenderWindow& window, Map* map[])
 
 void Game::Graphics(RenderWindow& window, Player* player, Map* map[])
 {
-	int delta_health;
+	int delta_health = 1;
 	draw_player(player, window);
 	draw_lives(player, delta_health, window);
 	draw_score(player, window);

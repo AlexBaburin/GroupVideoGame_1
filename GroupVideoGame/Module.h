@@ -41,20 +41,13 @@ public:
 		player_texture.loadFromFile("player_1.png");
 	}
 	void UpdatePosition(RenderWindow& window, Event& event);
-	bool CheckPosition() override; //проверка позиции объекта
+	bool CheckPosition(); //проверка позиции объекта
 };
-bool Player1::CheckPosition()
-{
-	if ((player_position.x <= RESOLUTION / 2) && player_position.y >= RESOLUTION / 2 - PLAYER_HIGHT)
-		if((player_position.x >= SIZE_OF_THORNS) && (player_position.y <= RESOLUTION - SIZE_OF_THORNS))
-			return true;
-	return false;
-}
 class Player2 : public Player //векторное движение
 {
 public:
 	void UpdatePosition(RenderWindow& window, Event& event);
-	bool CheckPosition() override;
+	bool CheckPosition();
 	Player2()
 	{
 		player_texture.loadFromFile("player_2.png");
@@ -64,7 +57,7 @@ class Player3 : public Player //невидимка
 {
 public:
 	void UpdatePosition(RenderWindow& window, Event& event);
-	bool CheckPosition() override;
+	bool CheckPosition();
 	Player3()
 	{
 		player_texture.loadFromFile("player_3.png");
@@ -74,18 +67,11 @@ class Player4 : public Player //враги
 {
 public:
 	void UpdatePosition(RenderWindow& window, Event& event);
-	bool CheckPosition() override;
+	bool CheckPosition();
 	Player4()
 	{
 		player_texture.loadFromFile("player_4.png");
 	}
-};
-
-class Game
-{
-public:
-	void Graphics(RenderWindow& window, Player* player, Map* map[]); //отрисовка игрока, карты, здоровья и т.д.
-	bool Is_player_dead(int hp, int score);
 };
 
 class Map
@@ -96,7 +82,7 @@ public:
 	RectangleShape objects[OBJ_NUMBER];
 	virtual void draw_map(RenderWindow& window) = 0; //отрисовка карты
 	//рандомная генерация очков и врагов
-	virtual void GenerateRandomScores();
+	//virtual void GenerateRandomScores() = 0;
 	void GenerateEnemy();
 };
 
@@ -122,7 +108,7 @@ public:
 		window.draw(objects_sprite);
 		window.draw(collisions_sprite);
 	}
-	void GenerateRandomScores();
+	//void GenerateRandomScores();
 };
 class Map2 : public Map //векторное движение
 {
@@ -145,6 +131,7 @@ public:
 		window.draw(objects_sprite);
 		window.draw(collisions_sprite);
 	}
+	//void GenerateRandomScores();
 };
 class Map3 : public Map //невидимка
 {
@@ -167,6 +154,7 @@ public:
 		window.draw(objects_sprite);
 		window.draw(collisions_sprite);
 	}
+	//void GenerateRandomScores();
 };
 class Map4 : public Map //враги
 {
@@ -189,7 +177,11 @@ public:
 		window.draw(objects_sprite);
 		window.draw(collisions_sprite);
 	}
+	//void GenerateRandomScores();
 };
-int Player::hp = 100;
-Coordinates Player::player_position = { 0, 0 };
-int Player::score = 100;
+class Game
+{
+public:
+	void Graphics(RenderWindow& window, Player* player, Map* map[]); //отрисовка игрока, карты, здоровья и т.д.
+	bool Is_player_dead(int hp, int score);
+};
