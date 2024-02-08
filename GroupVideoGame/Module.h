@@ -60,7 +60,7 @@ public:
 	bool CheckPosition() { return true; }
 	Player3()
 	{
-		player_texture.loadFromFile("player_1.png");
+		player_texture.loadFromFile("player_invisible.png");
 	}
 };
 class Player4 : public Player //враги
@@ -80,6 +80,7 @@ protected:
 	Sprite map_sprite, objects_sprite, collisions_sprite;
 	Texture map_texture, objects_texture, collisions_texture;
 public:
+	Coordinates position;
 	RectangleShape objects[OBJ_NUMBER];
 	virtual void draw_map(RenderWindow& window) = 0; //отрисовка карты
 	//рандомная генерация очков и врагов
@@ -98,11 +99,10 @@ public:
 		map_sprite.setTexture(map_texture);
 		objects_sprite.setTexture(objects_texture);
 		collisions_sprite.setTexture(collisions_texture);
-		map_sprite.setPosition(0, RESOLUTION / 2);
 	}
 	void draw_map(RenderWindow& window)
 	{
-		map_sprite.setPosition(0, RESOLUTION / 2);
+		map_sprite.setPosition(position.x, position.y);
 		window.draw(map_sprite);
 		//window.draw(objects_sprite);
 		//window.draw(collisions_sprite);
@@ -123,7 +123,7 @@ public:
 	}
 	void draw_map(RenderWindow& window)
 	{
-		map_sprite.setPosition(RESOLUTION / 2, RESOLUTION / 2);
+		map_sprite.setPosition(position.x, position.y);
 		window.draw(map_sprite);
 		window.draw(objects_sprite);
 		window.draw(collisions_sprite);
@@ -144,7 +144,7 @@ public:
 	}
 	void draw_map(RenderWindow& window)
 	{
-		map_sprite.setPosition(0, 0);
+		map_sprite.setPosition(position.x, position.y);
 		window.draw(map_sprite);
 		window.draw(objects_sprite);
 		window.draw(collisions_sprite);
@@ -165,7 +165,7 @@ public:
 	}
 	void draw_map(RenderWindow& window)
 	{
-		map_sprite.setPosition(RESOLUTION / 2, 0);
+		map_sprite.setPosition(position.x, position.y);
 		window.draw(map_sprite);
 		window.draw(objects_sprite);
 		window.draw(collisions_sprite);

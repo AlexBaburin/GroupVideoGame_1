@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <vector>
 #include "Module.h"
 #include "Graphics.h"
 using namespace sf;
@@ -76,18 +77,22 @@ void Player1::UpdatePosition(RenderWindow& window, Event& event)
         if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
         {
             player_position.y -= SPEED;
+            prev_event = Keyboard::Up;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player_position.y += SPEED;
+            prev_event = Keyboard::Down;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player_position.x -= SPEED;
+            prev_event = Keyboard::Left;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
             player_position.x += SPEED;
+            prev_event = Keyboard::Right;
         }
     }
     if (IsPlayerOutOfBounds())
@@ -152,18 +157,22 @@ void Player3::UpdatePosition(RenderWindow& window, Event& event)
         if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
         {
             player_position.y -= SPEED;
+            prev_event = Keyboard::Up;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player_position.y += SPEED;
+            prev_event = Keyboard::Down;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player_position.x -= SPEED;
+            prev_event = Keyboard::Left;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
             player_position.x += SPEED;
+            prev_event = Keyboard::Right;
         }
     }
     if (IsPlayerOutOfBounds())
@@ -182,18 +191,22 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event)
         if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
         {
             player_position.y -= SPEED;
+            prev_event = Keyboard::Up;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player_position.y += SPEED;
+            prev_event = Keyboard::Down;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player_position.x -= SPEED;
+            prev_event = Keyboard::Left;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
             player_position.x += SPEED;
+            prev_event = Keyboard::Right;
         }
     }
     if (IsPlayerOutOfBounds())
@@ -209,13 +222,10 @@ bool Game::Is_player_dead(int hp, int score)
     return false;
 }
 
-void GenerateRandomPosition(Player* player)
+void GenerateRandomPosition(Player* player, Map* map[])
 {
-    do
-    {
-        player->player_position.x = rand() % (RESOLUTION / 2) - PLAYER_WIDTH;
-        player->player_position.y = rand() % (RESOLUTION / 2) + RESOLUTION / 2;
-    } while (!player->CheckPosition());
+    player->player_position.x = rand() % (RESOLUTION / 2 - PLAYER_WIDTH) + map[0]->position.x;
+    player->player_position.y = rand() % (RESOLUTION / 2 - PLAYER_HIGHT) + map[0]->position.y;
 }
 
 int main()
@@ -223,9 +233,19 @@ int main()
     srand(time(NULL));
     Game game;
     Map* map[NUMBER_OF_LOCATIONS] = { new Map1(), new Map2(), new Map3(), new Map4() }; //указатель на количество локаций
+
+    std::vector<std::vector<int>> map_randomizer = {{0,0},{0, RESOLUTION / 2}, {RESOLUTION / 2, 0}, {RESOLUTION / 2, RESOLUTION / 2}};
+
+    for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
+    {
+        int j = rand() % map_randomizer.size();
+        map[i]->position.x = map_randomizer[j][0];
+        map[i]->position.y = map_randomizer[j][1];
+        map_randomizer.erase(map_randomizer.begin() + j);
+    }
     Player* Main_player = new Player1();
     Enemy* enemy = new Warrior();
-    GenerateRandomPosition(Main_player); // геенерирование случайной позиции в начальной локации
+    GenerateRandomPosition(Main_player, map); // генерирование случайной позиции в начальной локации
     Clock cl, limiter;
     Event event;
     Image icon;
@@ -240,25 +260,37 @@ int main()
         }
         Main_player->UpdatePosition(window, event); //вывод новой позиции при нажатии клавиши, проверка пересечения 
         //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
-        if (Main_player->player_position.x < RESOLUTION / 2 && Main_player->player_position.y > RESOLUTION / 2 &&
+        if (Main_player->player_position.x < (map[0]->position.x + RESOLUTION / 2) && 
+            Main_player->player_position.x > (map[0]->position.x) &&
+            Main_player->player_position.y < (map[0]->position.y + RESOLUTION / 2) &&
+            Main_player->player_position.y > (map[0]->position.y) &&
             !dynamic_cast<Player1*>(Main_player))
         {
             delete Main_player;
             Main_player = new Player1;
         }
-        if (Main_player->player_position.x > RESOLUTION / 2 && Main_player->player_position.y > RESOLUTION / 2 &&
+        if (Main_player->player_position.x < (map[1]->position.x + RESOLUTION / 2) &&
+            Main_player->player_position.x > (map[1]->position.x) &&
+            Main_player->player_position.y < (map[1]->position.y + RESOLUTION / 2) &&
+            Main_player->player_position.y > (map[1]->position.y) &&
             !dynamic_cast<Player2*>(Main_player))
         {
             delete Main_player;
             Main_player = new Player2;
         }
-        if (Main_player->player_position.x < RESOLUTION / 2 && Main_player->player_position.y < RESOLUTION / 2 &&
+        if (Main_player->player_position.x < (map[2]->position.x + RESOLUTION / 2) &&
+            Main_player->player_position.x > (map[2]->position.x) &&
+            Main_player->player_position.y < (map[2]->position.y + RESOLUTION / 2) &&
+            Main_player->player_position.y > (map[2]->position.y) &&
             !dynamic_cast<Player3*>(Main_player))
         {
             delete Main_player;
             Main_player = new Player3;
         }
-        if (Main_player->player_position.x > RESOLUTION / 2 && Main_player->player_position.y < RESOLUTION / 2 &&
+        if (Main_player->player_position.x < (map[3]->position.x + RESOLUTION / 2) &&
+            Main_player->player_position.x > (map[3]->position.x) &&
+            Main_player->player_position.y < (map[3]->position.y + RESOLUTION / 2) &&
+            Main_player->player_position.y > (map[3]->position.y) &&
             !dynamic_cast<Player4*>(Main_player))
         {
             delete Main_player;
