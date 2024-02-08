@@ -3,21 +3,32 @@
 using namespace sf;
 
 
-void draw_player(Player* pl, Map* m)
+void draw_player(Player* player)
 {
+	player->UpdatePosition();
 	//drawrect или drawsprite и тд (pl->player_position[0], pl->player_position[1]);
 }
-
-void draw_full_map()
+void draw_lives(Player* player, int delta_health)
+{
+	player->UpdateLives(delta_health);
+}
+void draw_score(Player* player)
+{
+	player->UpdateScore();
+}
+void draw_full_map(Map* map[])
 {
 	//отрисовка 4-х текстур классов Map
+	for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
+		map[i]->draw_map();
 }
 
-void Game::Graphics(Player* pl)
+void Game::Graphics(Player* player, Map* map[])
 {
-	draw_player(pl);
-	draw_full_map(); //отрисовка всей карты
-	draw_lives(pl);
-	draw_score(pl);
+	int delta_health;
+	draw_player(player);
+	draw_lives(player, delta_health);
+	draw_score(player);
+	draw_full_map(map); //отрисовка всей карты
 }
 
