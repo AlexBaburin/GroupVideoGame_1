@@ -6,7 +6,7 @@ using namespace sf;
 
 #define DIMENSIONS 2
 #define OBJ_NUMBER 5
-#define RESOLUTION 1200
+#define RESOLUTION 700
 #define PLAYER_HIGHT 100
 #define PLAYER_WIDTH 85
 #define SIZE_OF_THORNS 50
@@ -225,7 +225,21 @@ public:
 
 class Game
 {
+private:
+	Texture Fon_map2, Fon_map4;
+	Sprite Fon_2, Fon_4;
 public:
+	Game() {
+		Fon_map4.loadFromFile("Map_4_fon.png");
+		Fon_4.setTexture(Fon_map4);
+		Fon_4.setPosition(0, 0);
+		Fon_4.setScale((float)RESOLUTION / Fon_map4.getSize().x, (float)RESOLUTION / Fon_map4.getSize().y);
+
+		Fon_map2.loadFromFile("Map_2_fon.png");
+		Fon_2.setTexture(Fon_map2);
+		Fon_2.setPosition(0, 0);
+		Fon_2.setScale((float)RESOLUTION / Fon_map2.getSize().x, (float)RESOLUTION / Fon_map2.getSize().y);
+	}
 	void Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy);
 	bool Is_player_dead(int hp, int score);
 };
