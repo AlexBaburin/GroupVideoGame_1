@@ -6,10 +6,8 @@ using namespace sf;
 
 #define DIMENSIONS 2
 #define OBJ_NUMBER 5
-
 #define WARRIOR_WIDTH 100
 #define WARRIOR_HIGHT 125
-
 extern int RESOLUTION;
 extern int PLAYER_HIGHT;
 extern int PLAYER_WIDTH;
@@ -249,7 +247,7 @@ public:
 		lives.setCharacterSize(10);
 		lives.setPosition(player_position.x - 10, player_position.y - 50);
 		damage = 10;
-		field_of_sight = 200;
+		field_of_sight = 200 * RESOLUTION / 1200.0;
 		time_of_frame = 4.01;
 		delay = 0;
 		ratio = 0;

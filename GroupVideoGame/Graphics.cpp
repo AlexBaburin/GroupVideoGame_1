@@ -4,7 +4,6 @@ using namespace sf;
 
 void draw_enemy(Enemy* enemy, RenderWindow& window, int delta_health)
 {
-	enemy->enemy_sprite.setScale(1, 1);
 	window.draw(enemy->enemy_sprite);
 	if (enemy->hp > 0)
 	{
@@ -53,9 +52,9 @@ void Enemy_radius(RenderWindow& window, Enemy* enemy)
 {
 	if (enemy->hp > 0)
 	{
-		CircleShape board(100, 400);
+		CircleShape board(RESOLUTION / 12, 400);
 		board.setFillColor(Color(0, 0, 0, 50));
-		board.setOrigin(100, 100);
+		board.setOrigin(RESOLUTION / 12, RESOLUTION / 12);
 		board.setPosition(Vector2f(enemy->player_position.x, enemy->player_position.y));
 		window.draw(board);
 	}
@@ -69,8 +68,8 @@ void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* ene
 	Enemy_radius(window, enemy);
 	enemy->DeathEnemy(enemy);
 	enemy->Fight(player, enemy);
-	draw_player(player, window);
 	draw_enemy(enemy, window, delta_health);
+	draw_player(player, window);
 	draw_bonuses(window, map);
 	draw_lives(player, delta_health, window);
 	//draw_score(player, window);

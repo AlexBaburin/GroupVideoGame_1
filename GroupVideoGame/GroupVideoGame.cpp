@@ -11,8 +11,8 @@ int PLAYER_WIDTH = int(RESOLUTION * 85.0 / 1200);
 
 int Player::hp = 100;
 Coordinates Player::player_position = { 0, 0 };
-int Player::score = 100;
-int Player::damage = 50;
+int Player::score = 30;
+int Player::damage = 10;
 Keyboard::Key prev_event = Keyboard::Key::T;
 Keyboard::Key attack_delay = Keyboard::Key::T;
 
@@ -76,6 +76,9 @@ void Warrior::Fight(Player* player, Enemy* enemy)
             time_of_frame = 4;
     enemy->enemy_texture.loadFromFile(NamesImages[index]);
     enemy_sprite.setTextureRect(IntRect(ratio, 0, WARRIOR_WIDTH, WARRIOR_HIGHT));
+    enemy_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+    if (player->player_position.x > player_position.x)
+        enemy_sprite.setScale(-RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 }
 void Warrior::DeathEnemy(Enemy* enemy)
 {
@@ -338,7 +341,10 @@ void IsBonusPickedUp(Player* player, Map* map[])
                 map[i]->objects_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0));
             if (rect1.intersects(rect2[i][j]))
             {
-                player->UpdateScore();
+                if (dynamic_cast<Player3*>(player))
+                    player->UpdateLives(10);
+                else
+                    player->UpdateScore();
                 map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() + j);
             }
         }
@@ -459,8 +465,10 @@ int main()
                 //Main_player->UpdateScore();
                 IsBonusPickedUp(Main_player, map);
                 game.Graphics(window, Main_player, map, enemy); // отрисовка карты и игрока
-                if (cl.getElapsedTime().asSeconds() >= 1) {
+                if (cl.getElapsedTime().asSeconds() >= 1) 
+                {
                     Main_player->score--;//обновляет таймер в секундах.
+                    std::cout << Main_player->score << "\n";
                     cl.restart();
                 }
             }
@@ -550,7 +558,7 @@ int main()
                                 time_button.restart();
                                 while (time_button.getElapsedTime().asMilliseconds() <= 200) {};
                                 Main_player->hp = 100;
-                                Main_player->score = 100;
+                                Main_player->score = 30;
                                 Main_player->player_position = { 0,0 };
                                 flag = true;
                                 break;
