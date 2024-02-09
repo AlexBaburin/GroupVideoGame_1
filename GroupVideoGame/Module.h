@@ -6,11 +6,13 @@ using namespace sf;
 
 #define DIMENSIONS 2
 #define OBJ_NUMBER 5
-#define RESOLUTION 1200
+
 #define WARRIOR_WIDTH 100
 #define WARRIOR_HIGHT 125
-#define PLAYER_HIGHT 100
-#define PLAYER_WIDTH 85
+
+extern int RESOLUTION;
+extern int PLAYER_HIGHT;
+extern int PLAYER_WIDTH;
 #define SIZE_OF_THORNS 50
 #define NUMBER_OF_LOCATIONS 4
 struct Coordinates
@@ -89,10 +91,11 @@ public:
 class Map
 {
 protected:
-	Sprite map_sprite, collisions_sprite;
+	Sprite map_sprite;
 	Texture map_texture, objects_texture, collisions_texture;
 public:
 	std::vector<Sprite> objects_sprite;
+	std::vector<Sprite> collisions_sprite;
 	Coordinates position;
 	RectangleShape objects[OBJ_NUMBER];
 	virtual void draw_map(RenderWindow& window) = 0; //отрисовка карты
@@ -108,15 +111,16 @@ public:
 	{
 		map_texture.loadFromFile("Room1_floor.png");
 		objects_texture.loadFromFile("time.png");
-		collisions_texture.loadFromFile("");
+		collisions_texture.loadFromFile("wall.png");
 		map_sprite.setTexture(map_texture);
+		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		Sprite tmp;
 		tmp.setTexture(objects_texture);
 		for (int i = 0; i < (rand() % OBJ_NUMBER + 1); i++)
 		{
 			objects_sprite.push_back(tmp);
+			objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		}
-		collisions_sprite.setTexture(collisions_texture);
 	}
 	void draw_map(RenderWindow& window)
 	{
@@ -134,13 +138,14 @@ public:
 		objects_texture.loadFromFile("time.png");
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
+		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		Sprite tmp;
 		tmp.setTexture(objects_texture);
 		for (int i = 0; i < (rand() % OBJ_NUMBER + 1); i++)
 		{
 			objects_sprite.push_back(tmp);
+			objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		}
-		collisions_sprite.setTexture(collisions_texture);
 	}
 	void draw_map(RenderWindow& window)
 	{
@@ -158,13 +163,14 @@ public:
 		objects_texture.loadFromFile("coin.png");
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
+		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		Sprite tmp;
 		tmp.setTexture(objects_texture);
 		for (int i = 0; i < (rand() % OBJ_NUMBER + 1); i++)
 		{
 			objects_sprite.push_back(tmp);
+			objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		}
-		collisions_sprite.setTexture(collisions_texture);
 	}
 	void draw_map(RenderWindow& window)
 	{
@@ -182,13 +188,14 @@ public:
 		objects_texture.loadFromFile("");
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
+		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		Sprite tmp;
 		tmp.setTexture(objects_texture);
 		for (int i = 0; i < (rand() % OBJ_NUMBER + 1); i++)
 		{
 			objects_sprite.push_back(tmp);
+			objects_sprite[i].setScale(RESOLUTION/1200.0, RESOLUTION / 1200.0);
 		}
-		collisions_sprite.setTexture(collisions_texture);
 	}
 	void draw_map(RenderWindow& window)
 	{

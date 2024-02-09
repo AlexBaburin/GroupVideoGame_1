@@ -20,13 +20,16 @@ void draw_bonuses(RenderWindow& window, Map* map[])
 	for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
 		for (int j = 0; j < map[i]->objects_sprite.size(); j++)
 			window.draw(map[i]->objects_sprite[j]);
+	for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
+		for (int j = 0; j < map[i]->collisions_sprite.size(); j++)
+			window.draw(map[i]->collisions_sprite[j]);
 }
 
 void draw_player(Player* player, RenderWindow& window)
 {
 	Sprite player_sprite(player->player_texture);
 	player_sprite.setPosition(player->player_position.x, player->player_position.y);
-	player_sprite.setScale(1, 1);
+	player_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 	window.draw(player_sprite);
 }
 void draw_lives(Player* player, int delta_health, RenderWindow& window)

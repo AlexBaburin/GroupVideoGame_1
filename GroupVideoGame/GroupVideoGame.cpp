@@ -5,6 +5,9 @@
 using namespace sf;
 
 #define SPEED 5
+int RESOLUTION = 1200;
+int PLAYER_HIGHT = RESOLUTION / 12;
+int PLAYER_WIDTH = int(RESOLUTION * 85.0 / 1200);
 
 int Player::hp = 100;
 Coordinates Player::player_position = { 0, 0 };
@@ -331,13 +334,34 @@ void IsBonusPickedUp(Player* player, Map* map[])
         for (int j = 0; j < map[i]->objects_sprite.size(); j++)
         {
             rect2[i].push_back(FloatRect(map[i]->objects_sprite[j].getPosition().x, map[i]->objects_sprite[j].getPosition().y,
-                map[i]->objects_sprite[j].getTexture()->getSize().x, map[i]->objects_sprite[j].getTexture()->getSize().y));
+                map[i]->objects_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0, 
+                map[i]->objects_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0));
             if (rect1.intersects(rect2[i][j]))
             {
                 player->UpdateScore();
                 map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() + j);
             }
         }
+}
+bool CheckOverlap(std::vector<Sprite> sprites, std::vector<Sprite> sprites2, int j)
+{
+    for (int k = 0; k < j; ++k)
+    {
+        FloatRect rect1(sprites[j].getPosition().x - sprites[j].getTexture()->getSize().x * RESOLUTION / 1200.0,
+            sprites[j].getPosition().y - sprites[j].getTexture()->getSize().x * RESOLUTION / 1200.0,
+            sprites[j].getTexture()->getSize().x * 3 * RESOLUTION / 1200.0,
+            sprites[j].getTexture()->getSize().y * RESOLUTION / 1200.0 + sprites[j].getTexture()->getSize().x * 2 * RESOLUTION / 1200.0);
+        FloatRect rect2(sprites2[k].getPosition().x - sprites2[k].getTexture()->getSize().x * RESOLUTION / 1200.0,
+            sprites2[k].getPosition().y - sprites2[k].getTexture()->getSize().x * RESOLUTION / 1200.0,
+            sprites2[k].getTexture()->getSize().x * 3 * RESOLUTION / 1200.0,
+            sprites2[k].getTexture()->getSize().y * RESOLUTION / 1200.0 + sprites2[k].getTexture()->getSize().x * 2 * RESOLUTION / 1200.0);
+
+        if (rect1.intersects(rect2))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 int main()
@@ -365,25 +389,15 @@ int main()
             for (int j = 0; j < map[i]->objects_sprite.size(); j++)
             {
                 map[i]->objects_sprite[j].setPosition(map[i]->position.x + (rand() %
-                    (RESOLUTION / 2 - map[i]->objects_sprite[j].getTexture()->getSize().x)), map[i]->position.y + (rand() %
-                        (RESOLUTION / 2 - map[i]->objects_sprite[j].getTexture()->getSize().y)));
-                for (int k = 0; k < j; ++k)
-                {
-                    FloatRect rect1(map[i]->objects_sprite[j].getPosition().x - map[i]->objects_sprite[j].getTexture()->getSize().x,
-                        map[i]->objects_sprite[j].getPosition().y - map[i]->objects_sprite[j].getTexture()->getSize().x,
-                        map[i]->objects_sprite[j].getTexture()->getSize().x * 3,
-                        map[i]->objects_sprite[j].getTexture()->getSize().y + map[i]->objects_sprite[j].getTexture()->getSize().x * 2);
-                    FloatRect rect2(map[i]->objects_sprite[k].getPosition().x - map[i]->objects_sprite[k].getTexture()->getSize().x,
-                        map[i]->objects_sprite[k].getPosition().y - map[i]->objects_sprite[k].getTexture()->getSize().x,
-                        map[i]->objects_sprite[k].getTexture()->getSize().x * 3,
-                        map[i]->objects_sprite[k].getTexture()->getSize().y + map[i]->objects_sprite[k].getTexture()->getSize().x * 2);
-
-                    if (rect1.intersects(rect2))
-                    {
-                        j--;
-                        break;
-                    }
-                }
+                    (RESOLUTION / 2 - int(map[i]->objects_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0))),
+                    map[i]->position.y + (rand() %
+                        (RESOLUTION / 2 - int(map[i]->objects_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0))));
+               // map[i]->collisions_sprite[j].setPosition(map[i]->position.x + (rand() %
+                  //  (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0))),
+                   // map[i]->position.y + (rand() %
+                      //  (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0))));
+                if (CheckOverlap(map[i]->objects_sprite, map[i]->objects_sprite, j))
+                    j--;
             }
         }
         Player* Main_player = new Player1();
