@@ -1,12 +1,14 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-
+#include <vector>
 using namespace sf;
 
 #define DIMENSIONS 2
 #define OBJ_NUMBER 5
-#define RESOLUTION 700
+#define RESOLUTION 1200
+#define WARRIOR_WIDTH 100
+#define WARRIOR_HIGHT 125
 #define PLAYER_HIGHT 100
 #define PLAYER_WIDTH 85
 #define SIZE_OF_THORNS 50
@@ -25,6 +27,17 @@ public:
 	//static int player_position[DIMENSIONS];
 	static Coordinates player_position;
 	Texture player_texture;
+	Text lives;
+	Font font;
+	Player()
+	{
+		font.loadFromFile("Text.ttf");
+		lives.setFillColor(Color::Red);
+		lives.setString("HP:" + std::to_string(hp));
+		lives.setFont(font);
+		lives.setCharacterSize(10);
+		lives.setPosition(player_position.x + PLAYER_WIDTH / 6, player_position.y - 10);
+	}
 
 	virtual void UpdatePosition(RenderWindow& window, Event& event) = 0;
 	virtual bool CheckPosition() = 0;
@@ -188,28 +201,57 @@ class Enemy
 public:
 	Sprite enemy_sprite;
 	Texture enemy_texture;
+	Font font;
+	Text lives;
+	Clock time;
 	int hp;
 	int damage;
 	int field_of_sight;
 	double time_of_frame;
+	bool flag;
+	bool toggle;
+	bool death;
+	int ratio;
+	int delay;
+	std::vector <std::string> NamesImages = { "Hell-Monster-Sprite-Boss-Minion-getDamage.png" , "Hell-Monster-Sprite-Boss-Minion-Attack.png",
+		"Hell-Monster-Sprite-Boss-Minion.png", "Hell-Monster-Sprite-Boss-Minion-death.png" };
+	int index;
 	Coordinates player_position;
 public:
-	virtual void Fight(Player* player) = 0;
+	virtual void Fight(Player* player, Enemy* enemy) = 0;
 	virtual void GenerateRandomPosition(Map* map[]) = 0;
+	virtual void DeathEnemy(Enemy* enemy) = 0;
+	int UpdateLives(int delta_health);
 };
 class Warrior : public Enemy
 {
 public:
-	Warrior()
+
+	Warrior(Map* map[])
 	{
-		enemy_texture.loadFromFile("");
+		enemy_texture.loadFromFile(NamesImages[0], IntRect(0, 0, WARRIOR_WIDTH, WARRIOR_HIGHT));
 		enemy_sprite.setTexture(enemy_texture);
+		GenerateRandomPosition(map);
+		enemy_sprite.setPosition(Vector2f(player_position.x, player_position.y));
+		enemy_sprite.setOrigin(Vector2f(WARRIOR_WIDTH / 2, WARRIOR_HIGHT / 2));
 		hp = 100;
+		font.loadFromFile("Text.ttf");
+		lives.setFillColor(Color::Red);
+		lives.setString("HP:" + std::to_string(hp));
+		lives.setFont(font);
+		lives.setCharacterSize(10);
+		lives.setPosition(player_position.x - 10, player_position.y - 50);
 		damage = 10;
-		field_of_sight = 100;
-		time_of_frame = 6;
+		field_of_sight = 200;
+		time_of_frame = 4.01;
+		delay = 0;
+		ratio = 0;
+		flag = false;
+		toggle = true;
+		death = false;
 	}
-	void Fight(Player* player);
+	void Fight(Player* player, Enemy* enemy);
+	void DeathEnemy(Enemy* enemy);
 	void GenerateRandomPosition(Map* map[]);
 	bool CheckPosition();
 };
@@ -225,21 +267,7 @@ public:
 
 class Game
 {
-private:
-	Texture Fon_map2, Fon_map4;
-	Sprite Fon_2, Fon_4;
 public:
-	Game() {
-		Fon_map4.loadFromFile("Map_4_fon.png");
-		Fon_4.setTexture(Fon_map4);
-		Fon_4.setPosition(0, 0);
-		Fon_4.setScale((float)RESOLUTION / Fon_map4.getSize().x, (float)RESOLUTION / Fon_map4.getSize().y);
-
-		Fon_map2.loadFromFile("Map_2_fon.png");
-		Fon_2.setTexture(Fon_map2);
-		Fon_2.setPosition(0, 0);
-		Fon_2.setScale((float)RESOLUTION / Fon_map2.getSize().x, (float)RESOLUTION / Fon_map2.getSize().y);
-	}
 	void Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy);
 	bool Is_player_dead(int hp, int score);
 };

@@ -2,12 +2,17 @@
 #include "Graphics.h"
 using namespace sf;
 
-void draw_enemy(Enemy* enemy, RenderWindow& window)
+void draw_enemy(Enemy* enemy, RenderWindow& window, int delta_health)
 {
-	Sprite enemy_sprite(enemy->enemy_texture);
-	enemy_sprite.setPosition(enemy->player_position.x, enemy->player_position.y);
-	enemy_sprite.setScale(1, 1);
-	window.draw(enemy_sprite);
+	enemy->enemy_sprite.setScale(1, 1);
+	window.draw(enemy->enemy_sprite);
+	if (enemy->hp > 0)
+	{
+		enemy->UpdateLives(delta_health);
+		enemy->lives.setPosition(enemy->player_position.x - WARRIOR_WIDTH / 2 + 15, enemy->player_position.y - WARRIOR_HIGHT / 2 - 10);
+		enemy->lives.setString("HP:" + std::to_string(enemy->hp));
+		window.draw(enemy->lives);
+	}
 }
 
 void draw_bonuses(RenderWindow& window, Map* map[])
@@ -27,6 +32,9 @@ void draw_player(Player* player, RenderWindow& window)
 void draw_lives(Player* player, int delta_health, RenderWindow& window)
 {
 	player->UpdateLives(delta_health);
+	player->lives.setPosition(player->player_position.x + PLAYER_WIDTH / 2, player->player_position.y - 10);
+	player->lives.setString("HP:" + std::to_string(player->hp));
+	window.draw(player->lives);
 }
 void draw_score(Player* player, RenderWindow& window)
 {
@@ -38,46 +46,30 @@ void draw_full_map(RenderWindow& window, Map* map[])
 	for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
 		map[i]->draw_map(window);
 }
-
+void Enemy_radius(RenderWindow& window, Enemy* enemy)
+{
+	if (enemy->hp > 0)
+	{
+		CircleShape board(100, 400);
+		board.setFillColor(Color(0, 0, 0, 50));
+		board.setOrigin(100, 100);
+		board.setPosition(Vector2f(enemy->player_position.x, enemy->player_position.y));
+		window.draw(board);
+	}
+}
 void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy)
 {
 	window.clear();
 	int delta_health = 0;
 	draw_full_map(window, map); //отрисовка всей карты
+
+	Enemy_radius(window, enemy);
+	enemy->DeathEnemy(enemy);
+	enemy->Fight(player, enemy);
 	draw_player(player, window);
-	draw_enemy(enemy, window);
+	draw_enemy(enemy, window, delta_health);
 	draw_bonuses(window, map);
 	draw_lives(player, delta_health, window);
 	//draw_score(player, window);
-	if (dynamic_cast<Player1*>(player)) {
-		RectangleShape Fon_map1;
-		Fon_map1.setSize(Vector2f(RESOLUTION, RESOLUTION));
-		Fon_map1.setFillColor(Color(0, 200, 0, 20));
-		Fon_map1.setPosition(0, 0);
-		window.draw(Fon_map1);
-	}
-	if (dynamic_cast<Player2*>(player)) {
-		RectangleShape Fon_map2;
-		Fon_map2.setSize(Vector2f(RESOLUTION, RESOLUTION));
-		Fon_map2.setFillColor(Color(0, 0, 200, 50));
-		Fon_map2.setPosition(0, 0);
-		window.draw(Fon_map2);
-		window.draw(Fon_2);
-	}
-	if (dynamic_cast<Player3*>(player)) {
-		RectangleShape Fon_map3;
-		Fon_map3.setSize(Vector2f(RESOLUTION, RESOLUTION));
-		Fon_map3.setFillColor(Color(100, 100, 100, 150));
-		Fon_map3.setPosition(0, 0);
-		window.draw(Fon_map3);
-	}
-	if (dynamic_cast<Player4*>(player)) {
-		RectangleShape Fon_map4;
-		Fon_map4.setSize(Vector2f(RESOLUTION, RESOLUTION));
-		Fon_map4.setFillColor(Color(200, 0, 0, 70));
-		Fon_map4.setPosition(0, 0);
-		window.draw(Fon_map4);
-		window.draw(Fon_4);
-	}
 	window.display();
 }

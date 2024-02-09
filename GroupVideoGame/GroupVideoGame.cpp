@@ -9,29 +9,85 @@ using namespace sf;
 int Player::hp = 100;
 Coordinates Player::player_position = { 0, 0 };
 int Player::score = 100;
+int Player::damage = 50;
 Keyboard::Key prev_event = Keyboard::Key::T;
+Keyboard::Key attack_delay = Keyboard::Key::T;
 
-void Warrior::Fight(Player* player)
+void Warrior::Fight(Player* player, Enemy* enemy)
 {
-    if (time_of_frame > 6)
-        time_of_frame -= 6;
-    else
-        time_of_frame += 0.005;
-    if ((player->player_position.x - player_position.x <= field_of_sight) &&
-        (player->player_position.y - player_position.y <= field_of_sight))
+    if (time_of_frame > 4)
     {
-        enemy_sprite.setTextureRect(IntRect(PLAYER_WIDTH * time_of_frame + PLAYER_WIDTH, PLAYER_HIGHT, PLAYER_WIDTH, PLAYER_HIGHT));
-        if ((player->player_position.x - player_position.x <= field_of_sight / 10) &&
-            (player->player_position.y - player_position.y <= field_of_sight / 10) && time_of_frame == 3)
-            player->UpdateLives(-damage);
+        time_of_frame -= 4;
     }
     else
-        enemy_sprite.setTextureRect(IntRect(PLAYER_WIDTH * time_of_frame + PLAYER_WIDTH, PLAYER_HIGHT, PLAYER_WIDTH, PLAYER_HIGHT));
+        time_of_frame += 0.05;
+    Event event;
+    ratio = 1.5 * WARRIOR_WIDTH * int(time_of_frame);
+    if ((1.5 * WARRIOR_WIDTH * time_of_frame) >= 548)
+        ratio = 448;
+    if (!death)
+    {
+        int distance_x = abs(player->player_position.x + PLAYER_WIDTH / 2 - player_position.x);
+        int distance_y = abs(player->player_position.y + PLAYER_HIGHT / 2 - player_position.y);
+        if (sqrt(distance_x * distance_x + distance_y * distance_y) <= field_of_sight)
+        {
+            if (flag)
+            {
+                index = 0;
+                if (time_of_frame > 4)
+                {
+                    flag = false;
+                }
+            }
+            else
+            {
+                index = 1;
+            }
+            if ((sqrt(distance_x * distance_x + distance_y * distance_y) <= (field_of_sight * 0.7)) && (time_of_frame > 3.96))
+            {
+                std::cout << "You got a damage!\n";
+                if (attack_delay == Keyboard::E)
+                {
+                    std::cout << "E\n";
+                    if ((time.getElapsedTime().asMilliseconds() > delay))
+                    {
+                        flag = true;
+                        delay = 10000;
+                        enemy->UpdateLives(-(player->damage));
+                        time.restart();
+                    }
+                }
+                if (time.getElapsedTime().asMilliseconds() > 4)
+                    delay = 0;
+                if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > 2)
+                    player->UpdateLives(-damage);
+            }
+        }
+        else
+        {
+            index = 2;
+        }
+    }
+    else
+        if (time_of_frame >= 4)
+            time_of_frame = 4;
+    enemy->enemy_texture.loadFromFile(NamesImages[index]);
+    enemy_sprite.setTextureRect(IntRect(ratio, 0, WARRIOR_WIDTH, WARRIOR_HIGHT));
+}
+void Warrior::DeathEnemy(Enemy* enemy)
+{
+    if (enemy->hp <= 0)
+    {
+        if (!enemy->death)
+            time_of_frame = 0.01;
+        enemy->death = true;
+        index = 3;
+    }
 }
 bool Warrior::CheckPosition()
 {
-    if ((player_position.x >= RESOLUTION / 2) && (player_position.x <= RESOLUTION - PLAYER_WIDTH))
-        if ((player_position.y <= RESOLUTION / 2 - PLAYER_HIGHT))
+    if ((player_position.x >= RESOLUTION / 2) && (player_position.x <= RESOLUTION - WARRIOR_WIDTH / 2))
+        if ((player_position.y <= RESOLUTION / 2 - WARRIOR_HIGHT / 2) && (player_position.y >= 0))
             return true;
     return false;
 }
@@ -39,6 +95,12 @@ void Warrior::GenerateRandomPosition(Map* map[])
 {
     player_position.x = rand() % (RESOLUTION / 2 - PLAYER_WIDTH) + map[3]->position.x;
     player_position.y = rand() % (RESOLUTION / 2 - PLAYER_HIGHT) + map[3]->position.y;
+}
+
+int Enemy::UpdateLives(int delta_health)
+{
+    hp += delta_health;
+    return hp;
 }
 
 bool Player1::CheckPosition()
@@ -67,7 +129,7 @@ void Player1::UpdatePosition(RenderWindow& window, Event& event)
 {
     while (window.pollEvent(event))
     {
-        if (event.type == Event::Closed)
+        if ((event.type == Event::Closed) || (Keyboard::isKeyPressed(Keyboard::Escape)))
         {
             window.close();
         }
@@ -101,7 +163,7 @@ void Player2::UpdatePosition(RenderWindow& window, Event& event)
 {
     while (window.pollEvent(event))
     {
-        if (event.type == Event::Closed)
+        if ((event.type == Event::Closed) || (Keyboard::isKeyPressed(Keyboard::Escape)))
         {
             window.close();
         }
@@ -147,7 +209,7 @@ void Player3::UpdatePosition(RenderWindow& window, Event& event)
 {
     while (window.pollEvent(event))
     {
-        if (event.type == Event::Closed)
+        if ((event.type == Event::Closed) || (Keyboard::isKeyPressed(Keyboard::Escape)))
         {
             window.close();
         }
@@ -181,29 +243,65 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event)
 {
     while (window.pollEvent(event))
     {
-        if (event.type == Event::Closed)
+        if ((event.type == Event::Closed) || (Keyboard::isKeyPressed(Keyboard::Escape)))
         {
             window.close();
         }
         if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
         {
             player_position.y -= SPEED;
-            prev_event = Keyboard::Up;
+            if (Keyboard::isKeyPressed(Keyboard::E))
+            {
+                attack_delay = Keyboard::E;
+            }
+            else
+            {
+                attack_delay = Keyboard::T;
+            }
         }
         else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player_position.y += SPEED;
-            prev_event = Keyboard::Down;
+            if (Keyboard::isKeyPressed(Keyboard::E))
+            {
+                attack_delay = Keyboard::E;
+            }
+            else
+            {
+                attack_delay = Keyboard::T;
+            }
         }
         else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player_position.x -= SPEED;
-            prev_event = Keyboard::Left;
+            if (Keyboard::isKeyPressed(Keyboard::E))
+            {
+                attack_delay = Keyboard::E;
+            }
+            else
+            {
+                attack_delay = Keyboard::T;
+            }
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
             player_position.x += SPEED;
-            prev_event = Keyboard::Right;
+            if (Keyboard::isKeyPressed(Keyboard::E))
+            {
+                attack_delay = Keyboard::E;
+            }
+            else
+            {
+                attack_delay = Keyboard::T;
+            }
+        }
+        else if (Keyboard::isKeyPressed(Keyboard::E))
+        {
+            attack_delay = Keyboard::E;
+        }
+        else
+        {
+            attack_delay = Keyboard::T;
         }
     }
     if (IsPlayerOutOfBounds())
@@ -237,7 +335,7 @@ void IsBonusPickedUp(Player* player, Map* map[])
             if (rect1.intersects(rect2[i][j]))
             {
                 player->UpdateScore();
-                map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() +  j);
+                map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() + j);
             }
         }
 }
@@ -289,10 +387,10 @@ int main()
             }
         }
         Player* Main_player = new Player1();
-        Enemy* enemy = new Warrior();
+        Enemy* enemy = new Warrior(map);
         GenerateRandomPosition(Main_player, map); // генерирование случайной позиции в начальной локации
-        enemy->GenerateRandomPosition(map); // генерирование случайной позиции врагов
-        Clock cl, limiter, GameOver_time;
+        /*enemy->GenerateRandomPosition(map);*/ // генерирование случайной позиции врагов
+        Clock cl, limiter, time_button, helper;
         Event event;
         Image icon;
         RenderWindow window(VideoMode(RESOLUTION, RESOLUTION), "Video game");
@@ -357,25 +455,16 @@ int main()
                 Texture Game_over_texture;
                 Game_over_texture.loadFromFile("Game_over.png");
                 Sprite Game_over;
-                Game_over.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
                 Game_over.setTexture(Game_over_texture);
                 Game_over.setPosition(0, 0);
 
                 //Инициализация кнопки и его состояний
                 Texture Button_texture, Button_texture2;
-
                 Button_texture.loadFromFile("Button1.png");//первое состояние кнопки
                 Button_texture2.loadFromFile("Button2.png");//второе состояние кнопки
-
                 Sprite Button, Button2;
-
-                Button.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
                 Button.setTexture(Button_texture);
-                Button.setPosition(RESOLUTION/6, RESOLUTION/1.5);
-
-                Button2.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
-                Button2.setTexture(Button_texture2);
-                Button2.setPosition(RESOLUTION / 6, RESOLUTION / 1.5);
+                Button.setPosition(200, 800);
 
                 //Шрифт для вывода оставшегося времени
                 Font font;
@@ -384,38 +473,37 @@ int main()
                 text.setStyle(Text::Italic);
                 text.setFillColor(Color(230, 230, 230));
                 text.setString(L"Оставшееся время: " + std::to_string(Main_player->score) + L" сек");
-                text.setPosition(RESOLUTION/12, RESOLUTION/2);
-                text.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
+                text.setPosition(100, 600);
 
                 //Анимация экрана окончания
                 if (!flag_EndGame) {
                     RectangleShape Black_helper;
                     for (int i = 255; i >= 0; i--) {
-                        GameOver_time.restart();
+                        helper.restart();
                         Black_helper.setFillColor(Color(0, 0, 0, i));
-                        Black_helper.setSize(Vector2f(RESOLUTION, RESOLUTION/4));
-                        Black_helper.setPosition(0, RESOLUTION / 12);
+                        Black_helper.setSize(Vector2f(1200, 300));
+                        Black_helper.setPosition(0, 100);
                         window.clear();
                         window.draw(Game_over);
                         window.draw(Black_helper);
                         Black_helper.setFillColor(Color(0, 0, 0));
-                        Black_helper.setPosition(0, RESOLUTION/3);
+                        Black_helper.setPosition(0, 400);
                         window.draw(Black_helper);
                         window.display();
-                        while (GameOver_time.getElapsedTime().asMilliseconds() <= 5) {};
+                        while (helper.getElapsedTime().asMilliseconds() <= 5) {};
                     }
                     for (int i = 255; i >= 0; i--) {
-                        GameOver_time.restart();
+                        helper.restart();
                         Black_helper.setFillColor(Color(0, 0, 0, i));
-                        Black_helper.setSize(Vector2f(RESOLUTION, RESOLUTION / 4));
-                        Black_helper.setPosition(0, RESOLUTION / 3);
+                        Black_helper.setSize(Vector2f(1200, 300));
+                        Black_helper.setPosition(0, 400);
                         window.clear();
                         window.draw(Game_over);
                         window.draw(Black_helper);
                         window.display();
-                        while (GameOver_time.getElapsedTime().asMilliseconds() <= 5) {};
+                        while (helper.getElapsedTime().asMilliseconds() <= 5) {};
                     }
-                    flag_EndGame=true;
+                    flag_EndGame = true;
                 }
 
                 window.clear();
@@ -437,14 +525,16 @@ int main()
                             int x = event.mouseButton.x;
                             int y = event.mouseButton.y;
                             if (Button.getGlobalBounds().contains(x, y)) {
+                                Button2.setTexture(Button_texture2);
+                                Button2.setPosition(200, 800);
 
                                 window.clear();
                                 window.draw(Game_over);
                                 window.draw(text);
                                 window.draw(Button2);
                                 window.display();
-                                GameOver_time.restart();
-                                while (GameOver_time.getElapsedTime().asMilliseconds() <= 200) {};
+                                time_button.restart();
+                                while (time_button.getElapsedTime().asMilliseconds() <= 200) {};
                                 Main_player->hp = 100;
                                 Main_player->score = 100;
                                 Main_player->player_position = { 0,0 };
