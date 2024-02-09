@@ -10,6 +10,7 @@ int PLAYER_HIGHT = RESOLUTION / 12;
 int PLAYER_WIDTH = int(RESOLUTION * 85.0 / 1200);
 #define THROW 75
 int Player::hp = 100;
+int Player::side = 1;//1=смотрит вправо; 2=смотрит влево;
 Coordinates Player::player_position = { 0, 0 };
 int Player::score = 30;
 int Player::damage = 1500;
@@ -362,7 +363,7 @@ bool Player::IsPlayerOutOfBounds()
         return false;
     return true;
 }
-void Player1::UpdatePosition(RenderWindow& window, Event& event)
+void Player1::UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame)
 {
     while (window.pollEvent(event))
     {
@@ -374,21 +375,33 @@ void Player1::UpdatePosition(RenderWindow& window, Event& event)
         {
             player_position.y -= SPEED;
             prev_event = Keyboard::Up;
+            if (side == 1) player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, PLAYER_WIDTH, PLAYER_HIGHT));
+            else  player_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 370, -PLAYER_WIDTH, PLAYER_HIGHT));
         }
         else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player_position.y += SPEED;
             prev_event = Keyboard::Down;
+            if (side == 1) player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, PLAYER_WIDTH, PLAYER_HIGHT));
+            else  player_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 370, -PLAYER_WIDTH, PLAYER_HIGHT));
         }
         else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player_position.x -= SPEED;
             prev_event = Keyboard::Left;
+            player_sprite.setTextureRect(IntRect(current_frame*(int)time+ PLAYER_WIDTH, 370, -PLAYER_WIDTH, PLAYER_HIGHT));
+            side = 2;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
             player_position.x += SPEED;
             prev_event = Keyboard::Right;
+            player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, PLAYER_WIDTH, PLAYER_HIGHT));
+            side = 1;
+        }
+        else {
+            if(side==1)player_sprite.setTextureRect(IntRect(180, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+            else player_sprite.setTextureRect(IntRect(180+ PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
         }
     }
     if (IsPlayerOutOfBounds())
@@ -396,7 +409,7 @@ void Player1::UpdatePosition(RenderWindow& window, Event& event)
         UpdateLives(-1000);
     }
 }
-void Player2::UpdatePosition(RenderWindow& window, Event& event)
+void Player2::UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame)
 {
     while (window.pollEvent(event))
     {
@@ -415,34 +428,44 @@ void Player2::UpdatePosition(RenderWindow& window, Event& event)
         else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             prev_event = Keyboard::Left;
+            side = 2;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
             prev_event = Keyboard::Right;
+            side = 1;
         }
     }
     if (prev_event == Keyboard::Up)
     {
         player_position.y -= SPEED;
+        if(side==1) player_sprite.setTextureRect(IntRect(0, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+        else player_sprite.setTextureRect(IntRect(PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
     }
     else if (prev_event == Keyboard::Down)
     {
         player_position.y += SPEED;
+        if (side == 1) player_sprite.setTextureRect(IntRect(0, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+        else player_sprite.setTextureRect(IntRect(PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
     }
     else if (prev_event == Keyboard::Left)
     {
         player_position.x -= SPEED;
+        if (side == 1) player_sprite.setTextureRect(IntRect(0, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+        else player_sprite.setTextureRect(IntRect(PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
     }
     else if (prev_event == Keyboard::Right)
     {
         player_position.x += SPEED;
+        if (side == 1) player_sprite.setTextureRect(IntRect(0, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+        else player_sprite.setTextureRect(IntRect(PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
     }
     if (IsPlayerOutOfBounds())
     {
         UpdateLives(-1000);
     }
 }
-void Player3::UpdatePosition(RenderWindow& window, Event& event)
+void Player3::UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame)
 {
     while (window.pollEvent(event))
     {
@@ -476,7 +499,7 @@ void Player3::UpdatePosition(RenderWindow& window, Event& event)
         UpdateLives(-1000);
     }
 }
-void Player4::UpdatePosition(RenderWindow& window, Event& event)
+void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame)
 {
     while (window.pollEvent(event))
     {
@@ -487,6 +510,8 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event)
         if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
         {
             player_position.y -= SPEED;
+            if (side == 1) player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, PLAYER_WIDTH, PLAYER_HIGHT));
+            else  player_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 370, -PLAYER_WIDTH, PLAYER_HIGHT));
             if (Keyboard::isKeyPressed(Keyboard::E))
             {
                 attack_delay = Keyboard::E;
@@ -499,6 +524,8 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event)
         else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player_position.y += SPEED;
+            if (side == 1) player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, PLAYER_WIDTH, PLAYER_HIGHT));
+            else  player_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 370, -PLAYER_WIDTH, PLAYER_HIGHT));
             if (Keyboard::isKeyPressed(Keyboard::E))
             {
                 attack_delay = Keyboard::E;
@@ -511,6 +538,8 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event)
         else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player_position.x -= SPEED;
+            player_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 370, -PLAYER_WIDTH, PLAYER_HIGHT));
+            side = 2;
             if (Keyboard::isKeyPressed(Keyboard::E))
             {
                 attack_delay = Keyboard::E;
@@ -523,6 +552,8 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event)
         else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
             player_position.x += SPEED;
+            player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, PLAYER_WIDTH, PLAYER_HIGHT));
+            side = 1;
             if (Keyboard::isKeyPressed(Keyboard::E))
             {
                 attack_delay = Keyboard::E;
@@ -538,6 +569,8 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event)
         }
         else
         {
+            if (side == 1)player_sprite.setTextureRect(IntRect(180, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+            else player_sprite.setTextureRect(IntRect(180 + PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
             attack_delay = Keyboard::T;
         }
     }
@@ -753,9 +786,11 @@ int main()
         Enemy* boss = new Boss(map);
         Enemy* tank = new Tank(map);
         GenerateRandomPosition(Main_player, map); // генерирование случайной позиции в начальной локации
-        Clock cl, limiter, time_button, helper;
+        /*enemy->GenerateRandomPosition(map);*/ // генерирование случайной позиции врагов
+        Clock cl, limiter, GameOver_time;
         Event event;
         Image icon;
+        float time_frame = 1, current_frame = 185;
         RenderWindow window(VideoMode(RESOLUTION, RESOLUTION), "Video game");
         icon.loadFromFile("icon.png");
         window.setIcon(128, 128, icon.getPixelsPtr()); //установка иконки игры (хз, поставил из своей игры, можете поменять)
@@ -765,10 +800,15 @@ int main()
             lever = game.Screen_Of_Win(window, Main_player, boss, Main_player->score);
             if (!game.Is_player_dead(Main_player->hp, Main_player->score) && lever) {
                 limiter.restart();
-                while (limiter.getElapsedTime().asMilliseconds() <= 10)
+                while (limiter.getElapsedTime().asMicroseconds() <= 10000)
                 {
                 }
-                Main_player->UpdatePosition(window, event); //вывод новой позиции при нажатии клавиши, проверка пересечения 
+                if (time_frame > 6) {
+                    time_frame = 1;
+                    current_frame = 185;
+                }
+                else time_frame += 0.3;
+                Main_player->UpdatePosition(window, event, time_frame, current_frame); //вывод новой позиции при нажатии клавиши, проверка пересечения 
                 //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
                 Transition_to_a_new_zone(Main_player, map);
                 //Main_player->UpdateScore();
@@ -781,108 +821,109 @@ int main()
                 }
             }
             else {
-                if (!lever)
-                    flag = true;
-                if (!flag)
-                {
-                    //Экран пройгрыша
-                    Texture Game_over_texture;
-                    Game_over_texture.loadFromFile("Game_over.png");
-                    Sprite Game_over;
-                    Game_over.setTexture(Game_over_texture);
-                    Game_over.setPosition(0, 0);
+                //Экран пройгрыша
+                Texture Game_over_texture;
+                Game_over_texture.loadFromFile("Game_over.png");
+                Sprite Game_over;
+                Game_over.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
+                Game_over.setTexture(Game_over_texture);
+                Game_over.setPosition(0, 0);
 
-                    //Инициализация кнопки и его состояний
-                    Texture Button_texture, Button_texture2;
-                    Button_texture.loadFromFile("Button1.png");//первое состояние кнопки
-                    Button_texture2.loadFromFile("Button2.png");//второе состояние кнопки
-                    Sprite Button, Button2;
-                    Button.setTexture(Button_texture);
-                    Button.setPosition(200, 800);
+                //Инициализация кнопки и его состояний
+                Texture Button_texture, Button_texture2;
 
-                    //Шрифт для вывода оставшегося времени
-                    Font font;
-                    font.loadFromFile("Text.ttf");
-                    Text text("", font, 50);
-                    text.setStyle(Text::Italic);
-                    text.setFillColor(Color(230, 230, 230));
-                    text.setString(L"Оставшееся время: " + std::to_string(Main_player->score) + L" сек");
-                    text.setPosition(100, 600);
+                Button_texture.loadFromFile("Button1.png");//первое состояние кнопки
+                Button_texture2.loadFromFile("Button2.png");//второе состояние кнопки
 
-                    //Анимация экрана окончания
-                    if (!flag_EndGame) {
-                        RectangleShape Black_helper;
-                        for (int i = 255; i >= 0; i--) {
-                            helper.restart();
-                            Black_helper.setFillColor(Color(0, 0, 0, i));
-                            Black_helper.setSize(Vector2f(1200, 300));
-                            Black_helper.setPosition(0, 100);
-                            window.clear();
-                            window.draw(Game_over);
-                            window.draw(Black_helper);
-                            Black_helper.setFillColor(Color(0, 0, 0));
-                            Black_helper.setPosition(0, 400);
-                            window.draw(Black_helper);
-                            window.display();
-                            while (helper.getElapsedTime().asMilliseconds() <= 5) {};
-                        }
-                        for (int i = 255; i >= 0; i--) {
-                            helper.restart();
-                            Black_helper.setFillColor(Color(0, 0, 0, i));
-                            Black_helper.setSize(Vector2f(1200, 300));
-                            Black_helper.setPosition(0, 400);
-                            window.clear();
-                            window.draw(Game_over);
-                            window.draw(Black_helper);
-                            window.display();
-                            while (helper.getElapsedTime().asMilliseconds() <= 5) {};
-                        }
-                        flag_EndGame = true;
+                Sprite Button, Button2;
+
+                Button.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
+                Button.setTexture(Button_texture);
+                Button.setPosition(RESOLUTION / 6, RESOLUTION / 1.5);
+
+                Button2.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
+                Button2.setTexture(Button_texture2);
+                Button2.setPosition(RESOLUTION / 6, RESOLUTION / 1.5);
+
+                //Шрифт для вывода оставшегося времени
+                Font font;
+                font.loadFromFile("Text.ttf");
+                Text text("", font, 50);
+                text.setStyle(Text::Italic);
+                text.setFillColor(Color(230, 230, 230));
+                text.setString(L"Оставшееся время: " + std::to_string(Main_player->score) + L" сек");
+                text.setPosition(RESOLUTION / 12, RESOLUTION / 2);
+                text.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
+
+                //Анимация экрана окончания
+                if (!flag_EndGame) {
+                    RectangleShape Black_helper;
+                    for (int i = 255; i >= 0; i--) {
+                        GameOver_time.restart();
+                        Black_helper.setFillColor(Color(0, 0, 0, i));
+                        Black_helper.setSize(Vector2f(RESOLUTION, RESOLUTION / 4));
+                        Black_helper.setPosition(0, RESOLUTION / 12);
+                        window.clear();
+                        window.draw(Game_over);
+                        window.draw(Black_helper);
+                        Black_helper.setFillColor(Color(0, 0, 0));
+                        Black_helper.setPosition(0, RESOLUTION / 3);
+                        window.draw(Black_helper);
+                        window.display();
+                        while (GameOver_time.getElapsedTime().asMilliseconds() <= 5) {};
                     }
+                    for (int i = 255; i >= 0; i--) {
+                        GameOver_time.restart();
+                        Black_helper.setFillColor(Color(0, 0, 0, i));
+                        Black_helper.setSize(Vector2f(RESOLUTION, RESOLUTION / 4));
+                        Black_helper.setPosition(0, RESOLUTION / 3);
+                        window.clear();
+                        window.draw(Game_over);
+                        window.draw(Black_helper);
+                        window.display();
+                        while (GameOver_time.getElapsedTime().asMilliseconds() <= 5) {};
+                    }
+                    flag_EndGame = true;
+                }
 
-                    window.clear();
-                    window.draw(Game_over);
-                    window.draw(text);
-                    window.draw(Button);
-                    window.display();
-                    //Обработка нажатия кнопки + перезапуск игры
-                    while (window.pollEvent(event))
+                window.clear();
+                window.draw(Game_over);
+                window.draw(text);
+                window.draw(Button);
+                window.display();
+                //Обработка нажатия кнопки + перезапуск игры
+                while (window.pollEvent(event))
+                {
+                    if (event.type == Event::Closed)
                     {
-                        if (event.type == Event::Closed)
+                        window.close();
+                    }
+                    else if (event.type == Event::MouseButtonPressed)
+                    {
+                        if (event.mouseButton.button == Mouse::Left)
                         {
-                            window.close();
-                        }
-                        else if (event.type == Event::MouseButtonPressed)
-                        {
-                            if (event.mouseButton.button == Mouse::Left)
-                            {
-                                int x = event.mouseButton.x;
-                                int y = event.mouseButton.y;
-                                if (Button.getGlobalBounds().contains(x, y)) {
-                                    Button2.setTexture(Button_texture2);
-                                    Button2.setPosition(200, 800);
+                            int x = event.mouseButton.x;
+                            int y = event.mouseButton.y;
+                            if (Button.getGlobalBounds().contains(x, y)) {
 
-                                    window.clear();
-                                    window.draw(Game_over);
-                                    window.draw(text);
-                                    window.draw(Button2);
-                                    window.display();
-                                    time_button.restart();
-                                    while (time_button.getElapsedTime().asMilliseconds() <= 200) {};
-                                    Main_player->hp = 100;
-                                    Main_player->score = 30;
-                                    Main_player->player_position = { 0,0 };
-                                    flag = true;
-                                    break;
-                                }
+                                window.clear();
+                                window.draw(Game_over);
+                                window.draw(text);
+                                window.draw(Button2);
+                                window.display();
+                                GameOver_time.restart();
+                                while (GameOver_time.getElapsedTime().asMilliseconds() <= 200) {};
+                                Main_player->hp = 100;
+                                Main_player->score = 100;
+                                Main_player->player_position = { 0,0 };
+                                flag = true;
+                                break;
                             }
                         }
                     }
-                    if (flag)break;
                 }
-                else
-                    break;
-                }
+                if (flag)break;
+            }
         }
     } while (flag);
 
