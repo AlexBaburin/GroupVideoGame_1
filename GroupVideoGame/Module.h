@@ -7,8 +7,8 @@ using namespace sf;
 #define DIMENSIONS 2
 #define OBJ_NUMBER 5
 #define RESOLUTION 1200
-#define PLAYER_HIGHT 40
-#define PLAYER_WIDTH 20
+#define PLAYER_HIGHT 100
+#define PLAYER_WIDTH 85
 #define SIZE_OF_THORNS 50
 #define NUMBER_OF_LOCATIONS 4
 struct Coordinates
@@ -93,8 +93,8 @@ class Map1 : public Map //статическое движение
 public:
 	Map1()
 	{
-		map_texture.loadFromFile("Map1.png");
-		objects_texture.loadFromFile("bonus.png");
+		map_texture.loadFromFile("Room1_floor.png");
+		objects_texture.loadFromFile("time.png");
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
 		Sprite tmp;
@@ -117,8 +117,8 @@ class Map2 : public Map //векторное движение
 public:
 	Map2()
 	{
-		map_texture.loadFromFile("Map2.png");
-		objects_texture.loadFromFile("bonus.png");
+		map_texture.loadFromFile("Room2_floor.png");
+		objects_texture.loadFromFile("time.png");
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
 		Sprite tmp;
@@ -141,8 +141,8 @@ class Map3 : public Map //невидимка
 public:
 	Map3()
 	{
-		map_texture.loadFromFile("Map3.png");
-		objects_texture.loadFromFile("bonus.png");
+		map_texture.loadFromFile("Room3_floor.png");
+		objects_texture.loadFromFile("coin.png");
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
 		Sprite tmp;
@@ -165,7 +165,7 @@ class Map4 : public Map //враги
 public:
 	Map4()
 	{
-		map_texture.loadFromFile("Map4.png");
+		map_texture.loadFromFile("Room4_Boss_floor.png");
 		objects_texture.loadFromFile("");
 		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);

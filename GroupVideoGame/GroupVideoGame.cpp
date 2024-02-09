@@ -225,6 +225,23 @@ void GenerateRandomPosition(Player* player, Map* map[])
     player->player_position.y = rand() % (RESOLUTION / 2 - PLAYER_HIGHT) + map[0]->position.y;
 }
 
+void IsBonusPickedUp(Player* player, Map* map[])
+{
+    FloatRect rect1(player->player_position.x, player->player_position.y, PLAYER_WIDTH, PLAYER_HIGHT);
+    std::vector<FloatRect> rect2[NUMBER_OF_LOCATIONS];
+    for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
+        for (int j = 0; j < map[i]->objects_sprite.size(); j++)
+        {
+            rect2[i].push_back(FloatRect(map[i]->objects_sprite[j].getPosition().x, map[i]->objects_sprite[j].getPosition().y,
+                map[i]->objects_sprite[j].getTexture()->getSize().x, map[i]->objects_sprite[j].getTexture()->getSize().y));
+            if (rect1.intersects(rect2[i][j]))
+            {
+                player->UpdateScore();
+                map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() +  j);
+            }
+        }
+}
+
 int main()
 {
     srand(time(NULL));
@@ -284,43 +301,44 @@ int main()
         }
         Main_player->UpdatePosition(window, event); //вывод новой позиции при нажатии клавиши, проверка пересечения 
         //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
-        if (Main_player->player_position.x < (map[0]->position.x + RESOLUTION / 2) && 
-            Main_player->player_position.x > (map[0]->position.x) &&
-            Main_player->player_position.y < (map[0]->position.y + RESOLUTION / 2) &&
-            Main_player->player_position.y > (map[0]->position.y) &&
+        if ((Main_player->player_position.x + PLAYER_WIDTH / 2) < (map[0]->position.x + RESOLUTION / 2) && 
+            (Main_player->player_position.x + PLAYER_WIDTH / 2) > (map[0]->position.x) &&
+            (Main_player->player_position.y + PLAYER_HIGHT / 2) < (map[0]->position.y + RESOLUTION / 2) &&
+            (Main_player->player_position.y + PLAYER_HIGHT / 2) > (map[0]->position.y) &&
             !dynamic_cast<Player1*>(Main_player))
         {
             delete Main_player;
             Main_player = new Player1;
         }
-        if (Main_player->player_position.x < (map[1]->position.x + RESOLUTION / 2) &&
-            Main_player->player_position.x > (map[1]->position.x) &&
-            Main_player->player_position.y < (map[1]->position.y + RESOLUTION / 2) &&
-            Main_player->player_position.y > (map[1]->position.y) &&
+        if ((Main_player->player_position.x + PLAYER_WIDTH / 2) < (map[1]->position.x + RESOLUTION / 2) &&
+            (Main_player->player_position.x + PLAYER_WIDTH / 2) > (map[1]->position.x) &&
+            (Main_player->player_position.y + PLAYER_HIGHT / 2) < (map[1]->position.y + RESOLUTION / 2) &&
+            (Main_player->player_position.y + PLAYER_HIGHT / 2) > (map[1]->position.y) &&
             !dynamic_cast<Player2*>(Main_player))
         {
             delete Main_player;
             Main_player = new Player2;
         }
-        if (Main_player->player_position.x < (map[2]->position.x + RESOLUTION / 2) &&
-            Main_player->player_position.x > (map[2]->position.x) &&
-            Main_player->player_position.y < (map[2]->position.y + RESOLUTION / 2) &&
-            Main_player->player_position.y > (map[2]->position.y) &&
+        if ((Main_player->player_position.x + PLAYER_WIDTH / 2) < (map[2]->position.x + RESOLUTION / 2) &&
+            (Main_player->player_position.x + PLAYER_WIDTH / 2) > (map[2]->position.x) &&
+            (Main_player->player_position.y + PLAYER_HIGHT / 2) < (map[2]->position.y + RESOLUTION / 2) &&
+            (Main_player->player_position.y + PLAYER_HIGHT / 2) > (map[2]->position.y) &&
             !dynamic_cast<Player3*>(Main_player))
         {
             delete Main_player;
             Main_player = new Player3;
         }
-        if (Main_player->player_position.x < (map[3]->position.x + RESOLUTION / 2) &&
-            Main_player->player_position.x > (map[3]->position.x) &&
-            Main_player->player_position.y < (map[3]->position.y + RESOLUTION / 2) &&
-            Main_player->player_position.y > (map[3]->position.y) &&
+        if ((Main_player->player_position.x + PLAYER_WIDTH / 2) < (map[3]->position.x + RESOLUTION / 2) &&
+            (Main_player->player_position.x + PLAYER_WIDTH / 2) > (map[3]->position.x) &&
+            (Main_player->player_position.y + PLAYER_HIGHT / 2) < (map[3]->position.y + RESOLUTION / 2) &&
+            (Main_player->player_position.y + PLAYER_HIGHT / 2) > (map[3]->position.y) &&
             !dynamic_cast<Player4*>(Main_player))
         {
             delete Main_player;
             Main_player = new Player4;
         }
         //Main_player->UpdateScore();
+        IsBonusPickedUp(Main_player, map);
         game.Graphics(window, Main_player, map, enemy); // отрисовка карты и игрока
         Main_player->score -= cl.getElapsedTime().asSeconds(); //обновляет таймер в секундах.
     }
