@@ -360,4 +360,5 @@ class Game
 public:
 	void Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy, Enemy* boss, Enemy* tank);
 	bool Is_player_dead(int hp, int score);
+	bool Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss, int score);
 };

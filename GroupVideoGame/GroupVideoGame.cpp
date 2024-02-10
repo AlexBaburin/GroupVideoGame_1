@@ -5,14 +5,14 @@
 using namespace sf;
 
 #define SPEED 5
-int RESOLUTION = 800;
+int RESOLUTION = 1200;
 int PLAYER_HIGHT = RESOLUTION / 12;
 int PLAYER_WIDTH = int(RESOLUTION * 85.0 / 1200);
 #define THROW 75
 int Player::hp = 100;
 Coordinates Player::player_position = { 0, 0 };
 int Player::score = 30;
-int Player::damage = 500;
+int Player::damage = 1500;
 Keyboard::Key prev_event = Keyboard::Key::T;
 Keyboard::Key attack_delay = Keyboard::Key::T;
 
@@ -600,14 +600,125 @@ bool CheckOverlap(std::vector<Sprite> sprites, std::vector<Sprite> sprites2, int
     }
     return false;
 }
+void Transition_to_a_new_zone(Player*& Main_player, Map* map[])
+{
+    if ((Main_player->player_position.x + PLAYER_WIDTH / 2) < (map[0]->position.x + RESOLUTION / 2) &&
+        (Main_player->player_position.x + PLAYER_WIDTH / 2) > (map[0]->position.x) &&
+        (Main_player->player_position.y + PLAYER_HIGHT / 2) < (map[0]->position.y + RESOLUTION / 2) &&
+        (Main_player->player_position.y + PLAYER_HIGHT / 2) > (map[0]->position.y) &&
+        !dynamic_cast<Player1*>(Main_player))
+    {
+        delete Main_player;
+        Main_player = new Player1;
+    }
+    if ((Main_player->player_position.x + PLAYER_WIDTH / 2) < (map[1]->position.x + RESOLUTION / 2) &&
+        (Main_player->player_position.x + PLAYER_WIDTH / 2) > (map[1]->position.x) &&
+        (Main_player->player_position.y + PLAYER_HIGHT / 2) < (map[1]->position.y + RESOLUTION / 2) &&
+        (Main_player->player_position.y + PLAYER_HIGHT / 2) > (map[1]->position.y) &&
+        !dynamic_cast<Player2*>(Main_player))
+    {
+        delete Main_player;
+        Main_player = new Player2;
+    }
+    if ((Main_player->player_position.x + PLAYER_WIDTH / 2) < (map[2]->position.x + RESOLUTION / 2) &&
+        (Main_player->player_position.x + PLAYER_WIDTH / 2) > (map[2]->position.x) &&
+        (Main_player->player_position.y + PLAYER_HIGHT / 2) < (map[2]->position.y + RESOLUTION / 2) &&
+        (Main_player->player_position.y + PLAYER_HIGHT / 2) > (map[2]->position.y) &&
+        !dynamic_cast<Player3*>(Main_player))
+    {
+        delete Main_player;
+        Main_player = new Player3;
+    }
+    if ((Main_player->player_position.x + PLAYER_WIDTH / 2) < (map[3]->position.x + RESOLUTION / 2) &&
+        (Main_player->player_position.x + PLAYER_WIDTH / 2) > (map[3]->position.x) &&
+        (Main_player->player_position.y + PLAYER_HIGHT / 2) < (map[3]->position.y + RESOLUTION / 2) &&
+        (Main_player->player_position.y + PLAYER_HIGHT / 2) > (map[3]->position.y) &&
+        !dynamic_cast<Player4*>(Main_player))
+    {
+        delete Main_player;
+        Main_player = new Player4;
+    }
+}
+bool Game::Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss, int score)
+{
+    if (boss->hp <= 0)
+    {
+        bool flag = false;
+        Font font;
+        font.loadFromFile("Text.ttf");
+        Text text_score(L"Оставшееся время: " + std::to_string(score), font, 50);
+        text_score.setStyle(Text::Style::Italic && Text::Style::Bold);
+        text_score.setPosition(RESOLUTION / 4 - RESOLUTION / 12, RESOLUTION / 2 + RESOLUTION / 8);
+        Clock time_button;
 
+        Texture texture_background, texture_button1, texture_button2;
+        Sprite background, button1, button2;
+        texture_background.loadFromFile("win.png");
+        texture_button1.loadFromFile("Button1.png");
+        texture_button2.loadFromFile("Button2.png");
+        background.setTexture(texture_background);
+        button1.setTexture(texture_button1);
+        button2.setTexture(texture_button2);
+        background.setPosition(0, 0);
+        background.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+        button1.setPosition(RESOLUTION / 2 - RESOLUTION / 4 - RESOLUTION / 12, RESOLUTION / 2 + RESOLUTION / 6);
+        button1.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+        button2.setPosition(RESOLUTION / 2 - RESOLUTION / 4 - RESOLUTION / 12, RESOLUTION / 2 + RESOLUTION / 6);
+        button2.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+
+        Event event;
+        while (window.isOpen())
+        {
+            while (window.pollEvent(event))
+            {
+                if (event.type == Event::Closed)
+                    window.close();
+                if (Keyboard::isKeyPressed(Keyboard::Escape))
+                    window.close();
+                if (event.type == Event::MouseButtonPressed)
+                {
+                    if (event.mouseButton.button == Mouse::Left)
+                    {
+                        int x = event.mouseButton.x;
+                        int y = event.mouseButton.y;
+                        if (button1.getGlobalBounds().contains(x, y)) 
+                        {
+
+                            window.clear();
+                            window.draw(background);
+                            window.draw(text_score);
+                            window.draw(button2);
+                            window.display();
+                            while (time_button.getElapsedTime().asMilliseconds() <= 400) {};
+                            Main_player->hp = 100;
+                            Main_player->score = 30;
+                            Main_player->player_position = { 0,0 };
+                            flag = true;
+                            return false;
+                        }
+                    }
+                }
+            }
+            window.clear();
+
+            window.draw(background);
+            window.draw(text_score);
+            window.draw(button1);
+
+            window.display();
+        }
+    }
+    return true;
+}
 int main()
 {
     bool flag;
     bool flag_EndGame;
+    bool lever;
     do {
         flag = false;
         flag_EndGame = false;
+        lever = true;
         srand(time(NULL));
         Game game;
         Map* map[NUMBER_OF_LOCATIONS] = { new Map1(), new Map2(), new Map3(), new Map4() }; //указатель на количество локаций
@@ -629,10 +740,10 @@ int main()
                     (RESOLUTION / 2 - int(map[i]->objects_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0))),
                     map[i]->position.y + (rand() %
                         (RESOLUTION / 2 - int(map[i]->objects_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0))));
-               // map[i]->collisions_sprite[j].setPosition(map[i]->position.x + (rand() %
-                  //  (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0))),
-                   // map[i]->position.y + (rand() %
-                      //  (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0))));
+                // map[i]->collisions_sprite[j].setPosition(map[i]->position.x + (rand() %
+                   //  (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0))),
+                    // map[i]->position.y + (rand() %
+                       //  (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0))));
                 if (CheckOverlap(map[i]->objects_sprite, map[i]->objects_sprite, j))
                     j--;
             }
@@ -651,49 +762,15 @@ int main()
         cl.restart();
         while (window.isOpen())
         {
-            if (!game.Is_player_dead(Main_player->hp, Main_player->score)) {
+            lever = game.Screen_Of_Win(window, Main_player, boss, Main_player->score);
+            if (!game.Is_player_dead(Main_player->hp, Main_player->score) && lever) {
                 limiter.restart();
                 while (limiter.getElapsedTime().asMilliseconds() <= 10)
                 {
                 }
                 Main_player->UpdatePosition(window, event); //вывод новой позиции при нажатии клавиши, проверка пересечения 
                 //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
-                if ((Main_player->player_position.x + PLAYER_WIDTH / 2) < (map[0]->position.x + RESOLUTION / 2) &&
-                    (Main_player->player_position.x + PLAYER_WIDTH / 2) > (map[0]->position.x) &&
-                    (Main_player->player_position.y + PLAYER_HIGHT / 2) < (map[0]->position.y + RESOLUTION / 2) &&
-                    (Main_player->player_position.y + PLAYER_HIGHT / 2) > (map[0]->position.y) &&
-                    !dynamic_cast<Player1*>(Main_player))
-                {
-                    delete Main_player;
-                    Main_player = new Player1;
-                }
-                if ((Main_player->player_position.x + PLAYER_WIDTH / 2) < (map[1]->position.x + RESOLUTION / 2) &&
-                    (Main_player->player_position.x + PLAYER_WIDTH / 2) > (map[1]->position.x) &&
-                    (Main_player->player_position.y + PLAYER_HIGHT / 2) < (map[1]->position.y + RESOLUTION / 2) &&
-                    (Main_player->player_position.y + PLAYER_HIGHT / 2) > (map[1]->position.y) &&
-                    !dynamic_cast<Player2*>(Main_player))
-                {
-                    delete Main_player;
-                    Main_player = new Player2;
-                }
-                if ((Main_player->player_position.x + PLAYER_WIDTH / 2) < (map[2]->position.x + RESOLUTION / 2) &&
-                    (Main_player->player_position.x + PLAYER_WIDTH / 2) > (map[2]->position.x) &&
-                    (Main_player->player_position.y + PLAYER_HIGHT / 2) < (map[2]->position.y + RESOLUTION / 2) &&
-                    (Main_player->player_position.y + PLAYER_HIGHT / 2) > (map[2]->position.y) &&
-                    !dynamic_cast<Player3*>(Main_player))
-                {
-                    delete Main_player;
-                    Main_player = new Player3;
-                }
-                if ((Main_player->player_position.x + PLAYER_WIDTH / 2) < (map[3]->position.x + RESOLUTION / 2) &&
-                    (Main_player->player_position.x + PLAYER_WIDTH / 2) > (map[3]->position.x) &&
-                    (Main_player->player_position.y + PLAYER_HIGHT / 2) < (map[3]->position.y + RESOLUTION / 2) &&
-                    (Main_player->player_position.y + PLAYER_HIGHT / 2) > (map[3]->position.y) &&
-                    !dynamic_cast<Player4*>(Main_player))
-                {
-                    delete Main_player;
-                    Main_player = new Player4;
-                }
+                Transition_to_a_new_zone(Main_player, map);
                 //Main_player->UpdateScore();
                 IsBonusPickedUp(Main_player, map);
                 game.Graphics(window, Main_player, map, enemy, boss, tank); // отрисовка карты и игрока
@@ -704,101 +781,108 @@ int main()
                 }
             }
             else {
-                //Экран пройгрыша
-                Texture Game_over_texture;
-                Game_over_texture.loadFromFile("Game_over.png");
-                Sprite Game_over;
-                Game_over.setTexture(Game_over_texture);
-                Game_over.setPosition(0, 0);
-
-                //Инициализация кнопки и его состояний
-                Texture Button_texture, Button_texture2;
-                Button_texture.loadFromFile("Button1.png");//первое состояние кнопки
-                Button_texture2.loadFromFile("Button2.png");//второе состояние кнопки
-                Sprite Button, Button2;
-                Button.setTexture(Button_texture);
-                Button.setPosition(200, 800);
-
-                //Шрифт для вывода оставшегося времени
-                Font font;
-                font.loadFromFile("Text.ttf");
-                Text text("", font, 50);
-                text.setStyle(Text::Italic);
-                text.setFillColor(Color(230, 230, 230));
-                text.setString(L"Оставшееся время: " + std::to_string(Main_player->score) + L" сек");
-                text.setPosition(100, 600);
-
-                //Анимация экрана окончания
-                if (!flag_EndGame) {
-                    RectangleShape Black_helper;
-                    for (int i = 255; i >= 0; i--) {
-                        helper.restart();
-                        Black_helper.setFillColor(Color(0, 0, 0, i));
-                        Black_helper.setSize(Vector2f(1200, 300));
-                        Black_helper.setPosition(0, 100);
-                        window.clear();
-                        window.draw(Game_over);
-                        window.draw(Black_helper);
-                        Black_helper.setFillColor(Color(0, 0, 0));
-                        Black_helper.setPosition(0, 400);
-                        window.draw(Black_helper);
-                        window.display();
-                        while (helper.getElapsedTime().asMilliseconds() <= 5) {};
-                    }
-                    for (int i = 255; i >= 0; i--) {
-                        helper.restart();
-                        Black_helper.setFillColor(Color(0, 0, 0, i));
-                        Black_helper.setSize(Vector2f(1200, 300));
-                        Black_helper.setPosition(0, 400);
-                        window.clear();
-                        window.draw(Game_over);
-                        window.draw(Black_helper);
-                        window.display();
-                        while (helper.getElapsedTime().asMilliseconds() <= 5) {};
-                    }
-                    flag_EndGame = true;
-                }
-
-                window.clear();
-                window.draw(Game_over);
-                window.draw(text);
-                window.draw(Button);
-                window.display();
-                //Обработка нажатия кнопки + перезапуск игры
-                while (window.pollEvent(event))
+                if (!lever)
+                    flag = true;
+                if (!flag)
                 {
-                    if (event.type == Event::Closed)
-                    {
-                        window.close();
-                    }
-                    else if (event.type == Event::MouseButtonPressed)
-                    {
-                        if (event.mouseButton.button == Mouse::Left)
-                        {
-                            int x = event.mouseButton.x;
-                            int y = event.mouseButton.y;
-                            if (Button.getGlobalBounds().contains(x, y)) {
-                                Button2.setTexture(Button_texture2);
-                                Button2.setPosition(200, 800);
+                    //Экран пройгрыша
+                    Texture Game_over_texture;
+                    Game_over_texture.loadFromFile("Game_over.png");
+                    Sprite Game_over;
+                    Game_over.setTexture(Game_over_texture);
+                    Game_over.setPosition(0, 0);
 
-                                window.clear();
-                                window.draw(Game_over);
-                                window.draw(text);
-                                window.draw(Button2);
-                                window.display();
-                                time_button.restart();
-                                while (time_button.getElapsedTime().asMilliseconds() <= 200) {};
-                                Main_player->hp = 100;
-                                Main_player->score = 30;
-                                Main_player->player_position = { 0,0 };
-                                flag = true;
-                                break;
+                    //Инициализация кнопки и его состояний
+                    Texture Button_texture, Button_texture2;
+                    Button_texture.loadFromFile("Button1.png");//первое состояние кнопки
+                    Button_texture2.loadFromFile("Button2.png");//второе состояние кнопки
+                    Sprite Button, Button2;
+                    Button.setTexture(Button_texture);
+                    Button.setPosition(200, 800);
+
+                    //Шрифт для вывода оставшегося времени
+                    Font font;
+                    font.loadFromFile("Text.ttf");
+                    Text text("", font, 50);
+                    text.setStyle(Text::Italic);
+                    text.setFillColor(Color(230, 230, 230));
+                    text.setString(L"Оставшееся время: " + std::to_string(Main_player->score) + L" сек");
+                    text.setPosition(100, 600);
+
+                    //Анимация экрана окончания
+                    if (!flag_EndGame) {
+                        RectangleShape Black_helper;
+                        for (int i = 255; i >= 0; i--) {
+                            helper.restart();
+                            Black_helper.setFillColor(Color(0, 0, 0, i));
+                            Black_helper.setSize(Vector2f(1200, 300));
+                            Black_helper.setPosition(0, 100);
+                            window.clear();
+                            window.draw(Game_over);
+                            window.draw(Black_helper);
+                            Black_helper.setFillColor(Color(0, 0, 0));
+                            Black_helper.setPosition(0, 400);
+                            window.draw(Black_helper);
+                            window.display();
+                            while (helper.getElapsedTime().asMilliseconds() <= 5) {};
+                        }
+                        for (int i = 255; i >= 0; i--) {
+                            helper.restart();
+                            Black_helper.setFillColor(Color(0, 0, 0, i));
+                            Black_helper.setSize(Vector2f(1200, 300));
+                            Black_helper.setPosition(0, 400);
+                            window.clear();
+                            window.draw(Game_over);
+                            window.draw(Black_helper);
+                            window.display();
+                            while (helper.getElapsedTime().asMilliseconds() <= 5) {};
+                        }
+                        flag_EndGame = true;
+                    }
+
+                    window.clear();
+                    window.draw(Game_over);
+                    window.draw(text);
+                    window.draw(Button);
+                    window.display();
+                    //Обработка нажатия кнопки + перезапуск игры
+                    while (window.pollEvent(event))
+                    {
+                        if (event.type == Event::Closed)
+                        {
+                            window.close();
+                        }
+                        else if (event.type == Event::MouseButtonPressed)
+                        {
+                            if (event.mouseButton.button == Mouse::Left)
+                            {
+                                int x = event.mouseButton.x;
+                                int y = event.mouseButton.y;
+                                if (Button.getGlobalBounds().contains(x, y)) {
+                                    Button2.setTexture(Button_texture2);
+                                    Button2.setPosition(200, 800);
+
+                                    window.clear();
+                                    window.draw(Game_over);
+                                    window.draw(text);
+                                    window.draw(Button2);
+                                    window.display();
+                                    time_button.restart();
+                                    while (time_button.getElapsedTime().asMilliseconds() <= 200) {};
+                                    Main_player->hp = 100;
+                                    Main_player->score = 30;
+                                    Main_player->player_position = { 0,0 };
+                                    flag = true;
+                                    break;
+                                }
                             }
                         }
                     }
+                    if (flag)break;
                 }
-                if (flag)break;
-            }
+                else
+                    break;
+                }
         }
     } while (flag);
 
