@@ -59,17 +59,21 @@ void Enemy_radius(RenderWindow& window, Enemy* enemy)
 		window.draw(board);
 	}
 }
-void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy)
+void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy, Enemy* boss)
 {
 	window.clear();
 	int delta_health = 0;
 	draw_full_map(window, map); //отрисовка всей карты
 
 	Enemy_radius(window, enemy);
+	Enemy_radius(window, boss);
 	enemy->DeathEnemy(enemy);
+	enemy->DeathEnemy(boss);
 	enemy->Fight(player, enemy);
-	draw_enemy(enemy, window, delta_health);
+	boss->Fight(player, boss);
 	draw_player(player, window);
+	draw_enemy(enemy, window, delta_health);
+	draw_enemy(boss, window, delta_health);
 	draw_bonuses(window, map);
 	draw_lives(player, delta_health, window);
 	//draw_score(player, window);

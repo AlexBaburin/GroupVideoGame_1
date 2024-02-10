@@ -8,14 +8,117 @@ using namespace sf;
 int RESOLUTION = 1200;
 int PLAYER_HIGHT = RESOLUTION / 12;
 int PLAYER_WIDTH = int(RESOLUTION * 85.0 / 1200);
-
+#define THROW 75
 int Player::hp = 100;
 Coordinates Player::player_position = { 0, 0 };
 int Player::score = 30;
-int Player::damage = 10;
+int Player::damage = 500;
 Keyboard::Key prev_event = Keyboard::Key::T;
 Keyboard::Key attack_delay = Keyboard::Key::T;
-
+void FuncOfTrow(Player* player, Enemy* boss)
+{
+    if ((abs(player->player_position.y + PLAYER_HIGHT / 2 - boss->player_position.y - BOSS_HIGHT / 2) <= BOSS_HIGHT * 2) &&
+        (abs(player->player_position.x + PLAYER_WIDTH / 2 - boss->player_position.x - BOSS_WIDTH / 2) >= BOSS_WIDTH))
+        if ((player->player_position.x + PLAYER_WIDTH / 2 < boss->player_position.x + BOSS_WIDTH / 2))
+            player->player_position.x -= THROW;
+        else
+            player->player_position.x += THROW;
+    else
+        if (abs(player->player_position.x + PLAYER_WIDTH / 2 - boss->player_position.x - BOSS_WIDTH / 2) <= BOSS_WIDTH)
+            if ((player->player_position.y + PLAYER_HIGHT / 2 < boss->player_position.y + BOSS_HIGHT / 2))
+                player->player_position.y -= THROW;
+            else
+                player->player_position.y += THROW;
+}
+void Boss::Fight(Player* player, Enemy* boss)
+{
+    if (time_of_frame > 4)
+    {
+        time_of_frame -= 4;
+    }
+    else
+        time_of_frame += 0.1;
+    Event event;
+    ratio = 1.18 * BOSS_WIDTH * int(time_of_frame);
+    if ((1.18 * BOSS_WIDTH * time_of_frame) > 500)
+        ratio = 390;
+    if (!death)
+    {
+        int distance_x = abs(player->player_position.x + PLAYER_WIDTH / 2 - player_position.x);
+        int distance_y = abs(player->player_position.y + PLAYER_HIGHT / 2 - player_position.y);
+        if (sqrt(distance_x * distance_x + distance_y * distance_y) <= field_of_sight)
+        {
+            if (flag)
+            {
+                index = 0;
+                if (time_of_frame > 4)
+                {
+                    flag = false;
+                }
+            }
+            else
+            {
+                index = 1;
+            }
+            if ((sqrt(distance_x * distance_x + distance_y * distance_y) <= (field_of_sight * 0.7)) && (time_of_frame > 3.96))
+            {
+                std::cout << "You got a damage!\n";
+                if ((attack_delay == Keyboard::E) && (time.getElapsedTime().asMilliseconds() > delay))
+                {
+                    std::cout << "E\n";
+                    flag = true;
+                    delay = 10000;
+                    boss->UpdateLives(-(player->damage));
+                    time.restart();
+                }
+                if (time.getElapsedTime().asSeconds() > 2)
+                    delay = 0;
+                if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > 2)
+                {
+                    player->UpdateLives(-GetRandomDamage());
+                    FuncOfTrow(player, boss);
+                }
+            }
+        }
+        else
+        {
+            index = 2;
+        }
+    }
+    else
+        if (time_of_frame >= 4)
+            time_of_frame = 4;
+    if(prev_index != index)
+        boss->enemy_texture.loadFromFile(NamesImagesBoss[index]);
+    enemy_sprite.setTextureRect(IntRect(ratio, 0, BOSS_WIDTH, BOSS_HIGHT));
+    prev_index = index;
+}
+int Boss::GetRandomDamage()
+{
+    return (rand() % BOSS_AVERAGE_DAMAGE) + BOSS_AVERAGE_DAMAGE / 2;
+}
+void Boss::DeathEnemy(Enemy* enemy)
+{
+    if (enemy->hp <= 0)
+    {
+        if (!enemy->death)
+            time_of_frame = 0.01;
+        enemy->death = true;
+        index = 3;
+    }
+}
+bool Boss::CheckPosition()
+{
+    if ((player_position.x >= RESOLUTION / 2) && (player_position.x <= RESOLUTION - BOSS_WIDTH / 2))
+        if ((player_position.y <= RESOLUTION / 2 - BOSS_HIGHT / 2) && (player_position.y >= 0))
+            return true;
+    return false;
+}
+void Boss::GenerateRandomPosition(Map* map[])
+{
+    player_position.x = rand() % (RESOLUTION / 2 - PLAYER_WIDTH) + map[3]->position.x;
+    player_position.y = rand() % (RESOLUTION / 2 - PLAYER_HIGHT) + map[3]->position.y;
+}
 void Warrior::Fight(Player* player, Enemy* enemy)
 {
     if (time_of_frame > 4)
@@ -48,7 +151,6 @@ void Warrior::Fight(Player* player, Enemy* enemy)
             }
             if ((sqrt(distance_x * distance_x + distance_y * distance_y) <= (field_of_sight * 0.7)) && (time_of_frame > 3.96))
             {
-                std::cout << "You got a damage!\n";
                 if (attack_delay == Keyboard::E)
                 {
                     std::cout << "E\n";
@@ -60,10 +162,13 @@ void Warrior::Fight(Player* player, Enemy* enemy)
                         time.restart();
                     }
                 }
-                if (time.getElapsedTime().asMilliseconds() > 4)
+                if (time.getElapsedTime().asSeconds() > 2)
                     delay = 0;
                 if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > 2)
-                    player->UpdateLives(-damage);
+                {
+                    std::cout << "You got a damage!\n";
+                    player->UpdateLives(-GetRandomDamage());
+                }
             }
         }
         else
@@ -74,11 +179,17 @@ void Warrior::Fight(Player* player, Enemy* enemy)
     else
         if (time_of_frame >= 4)
             time_of_frame = 4;
-    enemy->enemy_texture.loadFromFile(NamesImages[index]);
+    if (prev_index != index)
+        enemy->enemy_texture.loadFromFile(NamesImagesWarrior[index]);
     enemy_sprite.setTextureRect(IntRect(ratio, 0, WARRIOR_WIDTH, WARRIOR_HIGHT));
     enemy_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
     if (player->player_position.x > player_position.x)
         enemy_sprite.setScale(-RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+    prev_index = index;
+}
+int Warrior::GetRandomDamage()
+{
+    return (rand() % BOSS_AVERAGE_DAMAGE) + BOSS_AVERAGE_DAMAGE / 2;
 }
 void Warrior::DeathEnemy(Enemy* enemy)
 {
@@ -408,6 +519,7 @@ int main()
         }
         Player* Main_player = new Player1();
         Enemy* enemy = new Warrior(map);
+        Enemy* boss = new Boss(map);
         GenerateRandomPosition(Main_player, map); // генерирование случайной позиции в начальной локации
         /*enemy->GenerateRandomPosition(map);*/ // генерирование случайной позиции врагов
         Clock cl, limiter, time_button, helper;
@@ -464,9 +576,8 @@ int main()
                 }
                 //Main_player->UpdateScore();
                 IsBonusPickedUp(Main_player, map);
-                game.Graphics(window, Main_player, map, enemy); // отрисовка карты и игрока
-                if (cl.getElapsedTime().asSeconds() >= 1) 
-                {
+                game.Graphics(window, Main_player, map, enemy, boss); // отрисовка карты и игрока
+                if (cl.getElapsedTime().asSeconds() >= 1) {
                     Main_player->score--;//обновляет таймер в секундах.
                     std::cout << Main_player->score << "\n";
                     cl.restart();
