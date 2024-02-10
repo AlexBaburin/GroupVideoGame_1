@@ -221,7 +221,7 @@ public:
 	Sprite enemy_sprite;
 	Texture enemy_texture;
 	Font font;
-	Text lives;
+	Text lives, text_boss;
 	Clock time;
 	int hp;
 	int damage;
@@ -245,6 +245,7 @@ public:
 	virtual void Fight(Player* player, Enemy* enemy) = 0;
 	virtual void GenerateRandomPosition(Map* map[]) = 0;
 	virtual void DeathEnemy(Enemy* enemy) = 0;
+	virtual bool CheckPosition(Map* map[]) = 0;
 	virtual int GetRandomDamage() = 0;
 	int UpdateLives(int delta_health);
 };
@@ -279,7 +280,7 @@ public:
 	void Fight(Player* player, Enemy* enemy);
 	void DeathEnemy(Enemy* enemy);
 	void GenerateRandomPosition(Map* map[]);
-	bool CheckPosition();
+	bool CheckPosition(Map* map[]);
 	int GetRandomDamage();
 };
 class Tank : public Enemy
@@ -312,7 +313,7 @@ public:
 	void Fight(Player* player, Enemy* enemy);
 	void DeathEnemy(Enemy* enemy);
 	void GenerateRandomPosition(Map* map[]);
-	bool CheckPosition();
+	bool CheckPosition(Map* map[]);
 	int GetRandomDamage();
 };
 class Boss : public Enemy
@@ -332,6 +333,11 @@ public:
 		lives.setFont(font);
 		lives.setCharacterSize(10);
 		lives.setPosition(player_position.x - 10, player_position.y - 50);
+		text_boss.setFillColor(Color::Red);
+		text_boss.setString("BOSS");
+		text_boss.setFont(font);
+		text_boss.setCharacterSize(25);
+		text_boss.setPosition(player_position.x - 50, player_position.y - 100);
 		damage = BOSS_AVERAGE_DAMAGE;
 		field_of_sight = FIELD_OF_SIGHT * RESOLUTION / 1200.0;
 		time_of_frame = 4.01;
@@ -345,7 +351,7 @@ public:
 	void Fight(Player* player, Enemy* enemy);
 	void DeathEnemy(Enemy* enemy);
 	void GenerateRandomPosition(Map* map[]);
-	bool CheckPosition();
+	bool CheckPosition(Map* map[]);
 	int GetRandomDamage();
 };
 

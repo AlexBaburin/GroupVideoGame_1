@@ -13,6 +13,18 @@ void draw_enemy(Enemy* enemy, RenderWindow& window, int delta_health)
 		window.draw(enemy->lives);
 	}
 }
+void draw_boss(Enemy* enemy, RenderWindow& window, int delta_health)
+{
+	window.draw(enemy->enemy_sprite);
+	if (enemy->hp > 0)
+	{
+		enemy->UpdateLives(delta_health);
+		enemy->lives.setPosition(enemy->player_position.x - WARRIOR_WIDTH / 2 + 15, enemy->player_position.y - WARRIOR_HIGHT / 2 - 10);
+		enemy->lives.setString("HP:" + std::to_string(enemy->hp));
+		window.draw(enemy->lives);
+		window.draw(enemy->text_boss);
+	}
+}
 
 void draw_bonuses(RenderWindow& window, Map* map[])
 {
@@ -83,8 +95,8 @@ void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* ene
 	//отрисовка игрока и врагов
 	draw_player(player, window);
 	draw_enemy(enemy, window, delta_health);
-	draw_enemy(boss, window, delta_health);
 	draw_enemy(tank, window, delta_health);
+	draw_boss(boss, window, delta_health);
 	draw_bonuses(window, map);
 	draw_lives(player, delta_health, window);
 	//draw_score(player, window);

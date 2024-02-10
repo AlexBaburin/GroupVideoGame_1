@@ -5,7 +5,7 @@
 using namespace sf;
 
 #define SPEED 5
-int RESOLUTION = 1200;
+int RESOLUTION = 800;
 int PLAYER_HIGHT = RESOLUTION / 12;
 int PLAYER_WIDTH = int(RESOLUTION * 85.0 / 1200);
 #define THROW 75
@@ -114,17 +114,22 @@ void Boss::DeathEnemy(Enemy* enemy)
         index = 3;
     }
 }
-bool Boss::CheckPosition()
+bool Boss::CheckPosition(Map* map[])
 {
-    if ((player_position.x >= RESOLUTION / 2) && (player_position.x <= RESOLUTION - BOSS_WIDTH / 2))
-        if ((player_position.y <= RESOLUTION / 2 - BOSS_HIGHT / 2) && (player_position.y >= 0))
+    std::cout << map[3]->position.x << "   " << map[3]->position.y << std::endl;
+    if ((player_position.x > map[3]->position.x) && (player_position.x + BOSS_WIDTH < map[3]->position.x + RESOLUTION ))
+        if ((player_position.y + BOSS_HIGHT < map[3]->position.y + RESOLUTION) && (player_position.y > map[3]->position.y))
             return true;
     return false;
 }
 void Boss::GenerateRandomPosition(Map* map[])
 {
-    player_position.x = rand() % (RESOLUTION / 2 - BOSS_WIDTH) + map[3]->position.x;
-    player_position.y = rand() % (RESOLUTION / 2 - BOSS_HIGHT) + map[3]->position.y;
+    do
+    {
+        player_position.x = rand() % (RESOLUTION / 8 - (BOSS_WIDTH + 10)) + map[3]->position.x + BOSS_WIDTH + RESOLUTION / 4;
+        player_position.y = rand() % (RESOLUTION / 2 - BOSS_HIGHT) + map[3]->position.y;
+        std::cout << CheckPosition(map) << "   " << player_position.x << "   " << player_position.y << std::endl;
+    } while (!CheckPosition(map));
 }
 
 void Warrior::Fight(Player* player, Enemy* enemy)
@@ -209,17 +214,20 @@ void Warrior::DeathEnemy(Enemy* enemy)
         index = 3;
     }
 }
-bool Warrior::CheckPosition()
+bool Warrior::CheckPosition(Map* map[])
 {
-    if ((player_position.x >= RESOLUTION / 2) && (player_position.x <= RESOLUTION - WARRIOR_WIDTH / 2))
-        if ((player_position.y <= RESOLUTION / 2 - WARRIOR_HIGHT / 2) && (player_position.y >= 0))
+    if ((player_position.x > map[3]->position.x) && (player_position.x + WARRIOR_WIDTH < map[3]->position.x + RESOLUTION))
+        if ((player_position.y + WARRIOR_HIGHT < map[3]->position.y + RESOLUTION) && (player_position.y > map[3]->position.y))
             return true;
     return false;
 }
 void Warrior::GenerateRandomPosition(Map* map[])
 {
-    player_position.x = rand() % (RESOLUTION / 2 - WARRIOR_WIDTH) + map[3]->position.x;
-    player_position.y = rand() % (RESOLUTION / 2 - WARRIOR_HIGHT) + map[3]->position.y;
+    do
+    {
+        player_position.x = rand() % (RESOLUTION / 8 - (WARRIOR_WIDTH + 10)) + map[3]->position.x + WARRIOR_WIDTH + RESOLUTION / 8;
+        player_position.y = rand() % (RESOLUTION / 2 - WARRIOR_HIGHT) + map[3]->position.y;
+    } while (!CheckPosition(map));
 }
 
 void Tank::Fight(Player* player, Enemy* tank)
@@ -310,17 +318,20 @@ void Tank::DeathEnemy(Enemy* enemy)
         index = 3;
     }
 }
-bool Tank::CheckPosition()
+bool Tank::CheckPosition(Map* map[])
 {
-    if ((player_position.x >= RESOLUTION / 2) && (player_position.x <= RESOLUTION - TANK_WIDTH / 2))
-        if ((player_position.y <= RESOLUTION / 2 - TANK_HIGHT / 2) && (player_position.y >= 0))
+    if ((player_position.x > map[3]->position.x) && (player_position.x + TANK_WIDTH < map[3]->position.x + RESOLUTION))
+        if ((player_position.y + TANK_HIGHT < map[3]->position.y + RESOLUTION) && (player_position.y > map[3]->position.y))
             return true;
     return false;
 }
 void Tank::GenerateRandomPosition(Map* map[])
 {
-    player_position.x = rand() % (RESOLUTION / 2 - TANK_WIDTH) + map[3]->position.x;
-    player_position.y = rand() % (RESOLUTION / 2 - TANK_HIGHT) + map[3]->position.y;
+    do
+    {
+        player_position.x = rand() % (RESOLUTION / 8 - (TANK_WIDTH + 20)) + map[3]->position.x + TANK_WIDTH;
+        player_position.y = rand() % (RESOLUTION / 2 - TANK_HIGHT) + map[3]->position.y;
+    } while (!CheckPosition(map));
 }
 
 int Enemy::UpdateLives(int delta_health)
@@ -631,7 +642,6 @@ int main()
         Enemy* boss = new Boss(map);
         Enemy* tank = new Tank(map);
         GenerateRandomPosition(Main_player, map); // генерирование случайной позиции в начальной локации
-        /*enemy->GenerateRandomPosition(map);*/ // генерирование случайной позиции врагов
         Clock cl, limiter, time_button, helper;
         Event event;
         Image icon;
