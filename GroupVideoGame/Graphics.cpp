@@ -52,28 +52,39 @@ void Enemy_radius(RenderWindow& window, Enemy* enemy)
 {
 	if (enemy->hp > 0)
 	{
-		CircleShape board(RESOLUTION / 12, 400);
+		CircleShape board(RESOLUTION / 6, 400), fieldDamage(RESOLUTION / 12, 400);
 		board.setFillColor(Color(0, 0, 0, 50));
-		board.setOrigin(RESOLUTION / 12, RESOLUTION / 12);
+		fieldDamage.setFillColor(Color(255, 0, 0, 50));
+		board.setOrigin(RESOLUTION / 6, RESOLUTION / 6);
+		fieldDamage.setOrigin(RESOLUTION / 12, RESOLUTION / 12);
 		board.setPosition(Vector2f(enemy->player_position.x, enemy->player_position.y));
+		fieldDamage.setPosition(Vector2f(enemy->player_position.x, enemy->player_position.y));
 		window.draw(board);
+		window.draw(fieldDamage);
 	}
 }
-void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy, Enemy* boss)
+void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy, Enemy* boss, Enemy* tank)
 {
 	window.clear();
 	int delta_health = 0;
 	draw_full_map(window, map); //отрисовка всей карты
-
+	//вычисления для врагов
 	Enemy_radius(window, enemy);
 	Enemy_radius(window, boss);
+	Enemy_radius(window, tank);
+
 	enemy->DeathEnemy(enemy);
-	enemy->DeathEnemy(boss);
+	boss->DeathEnemy(boss);
+	tank->DeathEnemy(tank);
+
 	enemy->Fight(player, enemy);
 	boss->Fight(player, boss);
+	tank->Fight(player, tank);
+	//отрисовка игрока и врагов
 	draw_player(player, window);
 	draw_enemy(enemy, window, delta_health);
 	draw_enemy(boss, window, delta_health);
+	draw_enemy(tank, window, delta_health);
 	draw_bonuses(window, map);
 	draw_lives(player, delta_health, window);
 	//draw_score(player, window);

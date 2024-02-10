@@ -6,6 +6,9 @@ using namespace sf;
 
 #define DIMENSIONS 2
 #define OBJ_NUMBER 5
+#define FIELD_OF_SIGHT 200
+
+#define WARRIOR_HP 150
 #define WARRIOR_WIDTH 100
 #define WARRIOR_HIGHT 125
 #define WARRIOR_AVERAGE_DAMAGE 15
@@ -13,6 +16,11 @@ using namespace sf;
 #define BOSS_WIDTH 110
 #define BOSS_HIGHT 110
 #define BOSS_AVERAGE_DAMAGE 25
+
+#define TANK_HP 350
+#define TANK_WIDTH 90
+#define TANK_HIGHT 100
+#define TANK_AVERAGE_DAMAGE 7
 
 extern int RESOLUTION;
 extern int PLAYER_HIGHT;
@@ -226,8 +234,8 @@ public:
 	int delay;
 	std::vector <std::string> NamesImagesWarrior = { "Hell-Monster-Sprite-Boss-Minion-getDamage.png" , "Hell-Monster-Sprite-Boss-Minion-Attack.png",
 		"Hell-Monster-Sprite-Boss-Minion.png", "Hell-Monster-Sprite-Boss-Minion-death.png" };
-	std::vector <std::string> NamesImagesTank = { "Hell-Monster-Sprite-Boss-Minion-getDamage.png" , "Hell-Monster-Sprite-Boss-Minion-Attack.png",
-		"Hell-Monster-Sprite-Boss-Minion.png", "Hell-Monster-Sprite-Boss-Minion-death.png" };
+	std::vector <std::string> NamesImagesTank = { "Mob2-Sprite-Hurt.png" , "Mob2-Sprite-Atack1.png",
+		"Mob2-Sprite-Idle.png", "Mob2-Sprite-Death.png" };
 	std::vector <std::string> NamesImagesBoss = { "Hell-Boss-Sprite-Damage.png" , "Hell-Boss-Sprite-Atack.png",
 		"Hell-Boss-Sprite-Stand.png", "Hell-Boss-Sprite-Death.png" };
 	int index;
@@ -251,7 +259,7 @@ public:
 		GenerateRandomPosition(map);
 		enemy_sprite.setPosition(Vector2f(player_position.x, player_position.y));
 		enemy_sprite.setOrigin(Vector2f(WARRIOR_WIDTH / 2, WARRIOR_HIGHT / 2));
-		hp = 100;
+		hp = WARRIOR_HP;
 		font.loadFromFile("Text.ttf");
 		lives.setFillColor(Color::Red);
 		lives.setString("HP:" + std::to_string(hp));
@@ -259,7 +267,7 @@ public:
 		lives.setCharacterSize(10);
 		lives.setPosition(player_position.x - 10, player_position.y - 50);
 		damage = WARRIOR_AVERAGE_DAMAGE;
-		field_of_sight = 200 * RESOLUTION / 1200.0;
+		field_of_sight = FIELD_OF_SIGHT * RESOLUTION / 1200.0;
 		time_of_frame = 4.01;
 		delay = 0;
 		ratio = 0;
@@ -274,36 +282,39 @@ public:
 	bool CheckPosition();
 	int GetRandomDamage();
 };
-//class Tank : public Enemy
-//{
-//	Tank(Map* map[])
-//	{
-//		enemy_texture.loadFromFile(NamesImagesTank[0], IntRect(0, 0, WARRIOR_WIDTH, WARRIOR_HIGHT));
-//		enemy_sprite.setTexture(enemy_texture);
-//		GenerateRandomPosition(map);
-//		enemy_sprite.setPosition(Vector2f(player_position.x, player_position.y));
-//		enemy_sprite.setOrigin(Vector2f(WARRIOR_WIDTH / 2, WARRIOR_HIGHT / 2));
-//		hp = 300;
-//		font.loadFromFile("Text.ttf");
-//		lives.setFillColor(Color::Red);
-//		lives.setString("HP:" + std::to_string(hp));
-//		lives.setFont(font);
-//		lives.setCharacterSize(10);
-//		lives.setPosition(player_position.x - 10, player_position.y - 50);
-//		damage = 7;
-//		field_of_sight = 200;
-//		time_of_frame = 4.01;
-//		delay = 0;
-//		ratio = 0;
-//		flag = false;
-//		toggle = true;
-//		death = false;
-//	}
-//	void Fight(Player* player, Enemy* enemy);
-//	void DeathEnemy(Enemy* enemy);
-//	void GenerateRandomPosition(Map* map[]);
-//	bool CheckPosition();
-//};
+class Tank : public Enemy
+{
+public:
+	Tank(Map* map[])
+	{
+		enemy_texture.loadFromFile(NamesImagesTank[0], IntRect(0, 0, BOSS_WIDTH, BOSS_HIGHT));
+		enemy_sprite.setTexture(enemy_texture);
+		GenerateRandomPosition(map);
+		enemy_sprite.setPosition(Vector2f(player_position.x, player_position.y));
+		enemy_sprite.setOrigin(Vector2f(BOSS_WIDTH / 2, BOSS_HIGHT / 2));
+		hp = TANK_HP;
+		font.loadFromFile("Text.ttf");
+		lives.setFillColor(Color::Red);
+		lives.setString("HP:" + std::to_string(hp));
+		lives.setFont(font);
+		lives.setCharacterSize(10);
+		lives.setPosition(player_position.x - 10, player_position.y - 50);
+		damage = BOSS_AVERAGE_DAMAGE;
+		field_of_sight = FIELD_OF_SIGHT * RESOLUTION / 1200.0;
+		time_of_frame = 4.01;
+		delay = 0;
+		ratio = 0;
+		index = prev_index = 1;
+		flag = false;
+		toggle = true;
+		death = false;
+	}
+	void Fight(Player* player, Enemy* enemy);
+	void DeathEnemy(Enemy* enemy);
+	void GenerateRandomPosition(Map* map[]);
+	bool CheckPosition();
+	int GetRandomDamage();
+};
 class Boss : public Enemy
 {
 public:
@@ -322,7 +333,7 @@ public:
 		lives.setCharacterSize(10);
 		lives.setPosition(player_position.x - 10, player_position.y - 50);
 		damage = BOSS_AVERAGE_DAMAGE;
-		field_of_sight = 200;
+		field_of_sight = FIELD_OF_SIGHT * RESOLUTION / 1200.0;
 		time_of_frame = 4.01;
 		delay = 0;
 		ratio = 0;
@@ -341,6 +352,6 @@ public:
 class Game
 {
 public:
-	void Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy, Enemy* boss);
+	void Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy, Enemy* boss, Enemy* tank);
 	bool Is_player_dead(int hp, int score);
 };
