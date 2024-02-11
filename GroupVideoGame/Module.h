@@ -6,6 +6,7 @@ using namespace sf;
 
 #define DIMENSIONS 2
 #define OBJ_NUMBER 5
+#define OBJ_SIZE 50
 #define FIELD_OF_SIGHT 200
 
 #define WARRIOR_HP 150
@@ -230,6 +231,7 @@ public:
 	void explode(Sprite& sprt)
 	{
 		sprt.setTexture(explosion_texture);
+		sprt.setTextureRect(IntRect(0, 0, OBJ_SIZE, OBJ_SIZE));
 	}
 	void draw_map(RenderWindow& window)
 	{

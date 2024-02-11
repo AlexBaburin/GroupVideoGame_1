@@ -118,7 +118,7 @@ void Boss::DeathEnemy(Enemy* enemy)
 }
 bool Boss::CheckPosition(Map* map[])
 {
-    std::cout << map[3]->position.x << "   " << map[3]->position.y << std::endl;
+    //std::cout << map[3]->position.x << "   " << map[3]->position.y << std::endl;
     if ((player_position.x > map[3]->position.x) && (player_position.x + BOSS_WIDTH < map[3]->position.x + RESOLUTION ))
         if ((player_position.y + BOSS_HIGHT < map[3]->position.y + RESOLUTION) && (player_position.y > map[3]->position.y))
             return true;
@@ -130,7 +130,7 @@ void Boss::GenerateRandomPosition(Map* map[])
     {
         player_position.x = rand() % (RESOLUTION / 8 - (BOSS_WIDTH + 10)) + map[3]->position.x + BOSS_WIDTH + RESOLUTION / 4;
         player_position.y = rand() % (RESOLUTION / 2 - BOSS_HIGHT) + map[3]->position.y;
-        std::cout << CheckPosition(map) << "   " << player_position.x << "   " << player_position.y << std::endl;
+        //std::cout << CheckPosition(map) << "   " << player_position.x << "   " << player_position.y << std::endl;
     } while (!CheckPosition(map));
 }
 
@@ -597,9 +597,9 @@ bool Game::Is_player_dead(int hp, int score)
 
 void GenerateRandomPosition(Player* player, Map* map[])
 {
-    player->player_position.x = rand() % (RESOLUTION / 2 - PLAYER_WIDTH * 2 - SIZE_OF_THORNS / 2) + map[0]->position.x + PLAYER_WIDTH + 
+    player->player_position.x = rand() % (RESOLUTION / 2 - PLAYER_WIDTH * 2 - SIZE_OF_THORNS * 2) + map[0]->position.x + PLAYER_WIDTH + 
         SIZE_OF_THORNS;
-    player->player_position.y = rand() % (RESOLUTION / 2 - PLAYER_HIGHT * 2 - SIZE_OF_THORNS / 2) + map[0]->position.y + PLAYER_HIGHT +
+    player->player_position.y = rand() % (RESOLUTION / 2 - PLAYER_HIGHT * 2 - SIZE_OF_THORNS * 2) + map[0]->position.y + PLAYER_HIGHT +
         SIZE_OF_THORNS;
 }
 
@@ -615,25 +615,37 @@ void IsBonusPickedUp(Player* player, Map* map[], std::vector<int> checker[])
             rect2[i].push_back(FloatRect(map[i]->objects_sprite[j].getPosition().x, map[i]->objects_sprite[j].getPosition().y,
                 map[i]->objects_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0, 
                 map[i]->objects_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0));
-            if (rect1.intersects(rect2[i][j]) && checker[i][j] == 0)
+            if (rect1.intersects(rect2[i][j]) && checker[i][j] <= 1)
             {
-                if (dynamic_cast<Player3*>(player) && j < map[i]->objects_sprite.size() / 2)
+                if (dynamic_cast<Player3*>(player) && checker[i][j] == 0)
                 {
                     player->UpdateLives(10);
                     map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() + j);
                     checker[i].erase(checker[i].begin() + j);
                 }
-                else if (j < map[i]->objects_sprite.size() / 2 || dynamic_cast<Player1*>(player) || dynamic_cast<Player4*>(player))
+                else if (checker[i][j] == 0)
                 {
                     player->UpdateScore();
                     map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() + j);
                     checker[i].erase(checker[i].begin() + j);
                 }
-                else
+                else if (checker[i][j] == 1)
                 {
                     player->UpdateLives(-50);
                     map[i]->explode(map[i]->objects_sprite[j]);
-                    checker[i][j] = 1;
+                    checker[i][j]++;
+                }
+            }
+            else if (checker[i][j] > 1)
+            {
+                checker[i][j]++;
+                if (checker[i][j] % 10 == 0)
+                    map[i]->objects_sprite[j].setTextureRect(IntRect(OBJ_SIZE * checker[i][j] / 10,
+                        0, OBJ_SIZE, OBJ_SIZE));
+                if (checker[i][j] == 100)
+                {
+                    map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() + j);
+                    checker[i].erase(checker[i].begin() + j);
                 }
             }
         }
@@ -805,14 +817,17 @@ int main()
                         + SIZE_OF_THORNS));
                 if (CheckOverlap(map[i]->objects_sprite, map[i]->objects_sprite, j))
                     j--;
-                std::cout << j << std::endl;
             }
         }
         std::vector<int> collision_checker[NUMBER_OF_LOCATIONS];
         for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
             for (int j = 0; j < map[i]->objects_sprite.size(); j++)
             {
-                collision_checker[i].push_back(0);
+                if (j < map[i]->objects_sprite.size() / 2 && (i == 1 || i == 2))
+                    collision_checker[i].push_back(0);
+                else if (j >= map[i]->objects_sprite.size() / 2 && (i == 1 || i == 2))
+                    collision_checker[i].push_back(1);
+                else collision_checker[i].push_back(0);
             }
         Player* Main_player = new Player1();
         Enemy* enemy = new Warrior(map);
