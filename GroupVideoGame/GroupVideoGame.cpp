@@ -515,6 +515,12 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, flo
             if (Keyboard::isKeyPressed(Keyboard::E))
             {
                 attack_delay = Keyboard::E;
+                if (time > 6) {
+                    time = 1;
+                    current_frame = 0;
+                }
+                if (side == 1) attack_sprite.setTextureRect(IntRect(current_frame * (int)time, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+                else  attack_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
             }
             else
             {
@@ -529,6 +535,12 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, flo
             if (Keyboard::isKeyPressed(Keyboard::E))
             {
                 attack_delay = Keyboard::E;
+                if (time > 6) {
+                    time = 1;
+                    current_frame = 0;
+                }
+                if (side == 1) attack_sprite.setTextureRect(IntRect(current_frame * (int)time, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+                else  attack_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
             }
             else
             {
@@ -543,6 +555,12 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, flo
             if (Keyboard::isKeyPressed(Keyboard::E))
             {
                 attack_delay = Keyboard::E;
+                if (time > 6) {
+                    time = 1;
+                    current_frame = 0;
+                }
+                if (side == 1) attack_sprite.setTextureRect(IntRect(current_frame * (int)time, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+                else  attack_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
             }
             else
             {
@@ -557,6 +575,12 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, flo
             if (Keyboard::isKeyPressed(Keyboard::E))
             {
                 attack_delay = Keyboard::E;
+                if (time > 6) {
+                    time = 1;
+                    current_frame = 0;
+                }
+                if (side == 1) attack_sprite.setTextureRect(IntRect(current_frame * (int)time, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+                else  attack_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
             }
             else
             {
@@ -566,6 +590,12 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, flo
         else if (Keyboard::isKeyPressed(Keyboard::E))
         {
             attack_delay = Keyboard::E;
+            if (time > 6) {
+                time = 1;
+                current_frame = 0;
+            }
+            if (side == 1) attack_sprite.setTextureRect(IntRect(current_frame * (int)time, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+            else  attack_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
         }
         else
         {

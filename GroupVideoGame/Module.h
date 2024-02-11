@@ -97,6 +97,9 @@ public:
 };
 class Player4 : public Player //враги
 {
+private:
+	Texture attack_texture;
+	Sprite attack_sprite;
 public:
 	void UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame);
 	bool CheckPosition() { return true; }
@@ -105,6 +108,9 @@ public:
 		player_texture.loadFromFile("Samurai-Sprite1.png");
 		player_sprite.setTexture(player_texture);
 		player_sprite.setTextureRect(IntRect(180, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+
+		attack_texture.loadFromFile("Samurai-Sprites4.png");
+		attack_sprite.setTexture(attack_texture);
 	}
 };
 
