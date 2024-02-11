@@ -647,14 +647,14 @@ bool CheckOverlap(std::vector<Sprite> sprites, std::vector<Sprite> sprites2, int
 {
     for (int k = 0; k < j; ++k)
     {
-        FloatRect rect1(sprites[j].getPosition().x - sprites[j].getTexture()->getSize().x * RESOLUTION / 1200.0,
-            sprites[j].getPosition().y - sprites[j].getTexture()->getSize().x * RESOLUTION / 1200.0,
-            sprites[j].getTexture()->getSize().x * 3 * RESOLUTION / 1200.0,
-            sprites[j].getTexture()->getSize().y * RESOLUTION / 1200.0 + sprites[j].getTexture()->getSize().x * 2 * RESOLUTION / 1200.0);
-        FloatRect rect2(sprites2[k].getPosition().x - sprites2[k].getTexture()->getSize().x * RESOLUTION / 1200.0,
-            sprites2[k].getPosition().y - sprites2[k].getTexture()->getSize().x * RESOLUTION / 1200.0,
-            sprites2[k].getTexture()->getSize().x * 3 * RESOLUTION / 1200.0,
-            sprites2[k].getTexture()->getSize().y * RESOLUTION / 1200.0 + sprites2[k].getTexture()->getSize().x * 2 * RESOLUTION / 1200.0);
+        FloatRect rect1(sprites[j].getPosition().x - PLAYER_WIDTH,
+            sprites[j].getPosition().y - PLAYER_HIGHT,
+            sprites[j].getTexture()->getSize().x * RESOLUTION / 1200.0 + 2* PLAYER_WIDTH,
+            sprites[j].getTexture()->getSize().y * RESOLUTION / 1200.0 + PLAYER_HIGHT * 2);
+        FloatRect rect2(sprites2[k].getPosition().x - PLAYER_WIDTH,
+            sprites2[k].getPosition().y - PLAYER_HIGHT,
+            sprites2[k].getTexture()->getSize().x * RESOLUTION / 1200.0 + 2 * PLAYER_WIDTH,
+            sprites2[k].getTexture()->getSize().y * RESOLUTION / 1200.0 + PLAYER_HIGHT * 2);
 
         if (rect1.intersects(rect2))
         {
@@ -803,12 +803,20 @@ int main()
                     (RESOLUTION / 2 - int(map[i]->objects_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0))),
                     map[i]->position.y + (rand() %
                         (RESOLUTION / 2 - int(map[i]->objects_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0))));
-                // map[i]->collisions_sprite[j].setPosition(map[i]->position.x + (rand() %
-                   //  (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0))),
-                    // map[i]->position.y + (rand() %
-                       //  (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0))));
-                if (CheckOverlap(map[i]->objects_sprite, map[i]->objects_sprite, j))
-                    j--;
+                /*if (i == 0)
+                {
+                    map[i]->collisions_sprite[j].setPosition(map[i]->position.x + (rand() %
+                        (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0))),
+                        map[i]->position.y + (rand() %
+                            (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0))));
+                    if (CheckOverlap(map[i]->objects_sprite, map[i]->objects_sprite, j) || 
+                        CheckOverlap(map[i]->objects_sprite, map[i]->collisions_sprite, j) ||
+                        CheckOverlap(map[i]->collisions_sprite, map[i]->collisions_sprite, j))
+                        j--;
+                } 
+                else */
+                    if (CheckOverlap(map[i]->objects_sprite, map[i]->objects_sprite, j))
+                        j--;
             }
         }
         Player* Main_player = new Player1();

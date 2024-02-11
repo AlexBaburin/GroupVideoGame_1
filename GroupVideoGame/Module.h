@@ -142,10 +142,18 @@ public:
 		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		Sprite tmp;
 		tmp.setTexture(objects_texture);
-		for (int i = 0; i < (rand() % OBJ_NUMBER + 1); i++)
+		int num = (rand() % OBJ_NUMBER + 1);
+		for (int i = 0; i < num; i++)
 		{
 			objects_sprite.push_back(tmp);
 			objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+		}
+		tmp.setTexture(collisions_texture);
+		for (int i = 0; i < num; i++)
+		{
+			collisions_sprite.push_back(tmp);
+			collisions_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+			collisions_sprite[i].setRotation(rand() % 2);
 		}
 	}
 	void draw_map(RenderWindow& window)
@@ -167,7 +175,8 @@ public:
 		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		Sprite tmp;
 		tmp.setTexture(objects_texture);
-		for (int i = 0; i < (rand() % OBJ_NUMBER + 1); i++)
+		int num = (rand() % OBJ_NUMBER + 1);
+		for (int i = 0; i < num; i++)
 		{
 			objects_sprite.push_back(tmp);
 			objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
@@ -192,7 +201,8 @@ public:
 		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		Sprite tmp;
 		tmp.setTexture(objects_texture);
-		for (int i = 0; i < (rand() % OBJ_NUMBER + 1); i++)
+		int num = (rand() % OBJ_NUMBER + 1);
+		for (int i = 0; i < num; i++)
 		{
 			objects_sprite.push_back(tmp);
 			objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
@@ -217,7 +227,8 @@ public:
 		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		Sprite tmp;
 		tmp.setTexture(objects_texture);
-		for (int i = 0; i < (rand() % OBJ_NUMBER + 1); i++)
+		int num = (rand() % OBJ_NUMBER + 1);
+		for (int i = 0; i < num; i++)
 		{
 			objects_sprite.push_back(tmp);
 			objects_sprite[i].setScale(RESOLUTION/1200.0, RESOLUTION / 1200.0);
