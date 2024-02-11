@@ -9,6 +9,7 @@ int RESOLUTION = 1200;
 int PLAYER_HIGHT = RESOLUTION / 12;
 int PLAYER_WIDTH = int(RESOLUTION * 85.0 / 1200);
 #define THROW 75
+int SIZE_OF_THORNS = 50;
 int Player::hp = 100;
 int Player::side = 1;//1=смотрит вправо; 2=смотрит влево;
 Coordinates Player::player_position = { 0, 0 };
@@ -359,7 +360,10 @@ void Player::UpdateScore()
 }
 bool Player::IsPlayerOutOfBounds()
 {
-    if (player_position.x > 0 && player_position.x < RESOLUTION && player_position.y > 0 && player_position.y < RESOLUTION)
+    if (player_position.x > SIZE_OF_THORNS && 
+        player_position.x + PLAYER_WIDTH < RESOLUTION - SIZE_OF_THORNS &&
+        player_position.y > SIZE_OF_THORNS &&
+        player_position.y + PLAYER_HIGHT < RESOLUTION - SIZE_OF_THORNS)
         return false;
     return true;
 }
@@ -619,12 +623,16 @@ bool Game::Is_player_dead(int hp, int score)
 
 void GenerateRandomPosition(Player* player, Map* map[])
 {
-    player->player_position.x = rand() % (RESOLUTION / 2 - PLAYER_WIDTH) + map[0]->position.x;
-    player->player_position.y = rand() % (RESOLUTION / 2 - PLAYER_HIGHT) + map[0]->position.y;
+    player->player_position.x = rand() % (RESOLUTION / 2 - PLAYER_WIDTH * 2 - SIZE_OF_THORNS / 2) + map[0]->position.x + PLAYER_WIDTH + 
+        SIZE_OF_THORNS;
+    player->player_position.y = rand() % (RESOLUTION / 2 - PLAYER_HIGHT * 2 - SIZE_OF_THORNS / 2) + map[0]->position.y + PLAYER_HIGHT +
+        SIZE_OF_THORNS;
 }
 
-void IsBonusPickedUp(Player* player, Map* map[])
+void IsBonusPickedUp(Player* player, Map* map[], std::vector<int> checker[])
 {
+    Texture bomb_texture;
+    bomb_texture.loadFromFile("bomb.png");
     FloatRect rect1(player->player_position.x, player->player_position.y, PLAYER_WIDTH, PLAYER_HIGHT);
     std::vector<FloatRect> rect2[NUMBER_OF_LOCATIONS];
     for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
@@ -633,13 +641,26 @@ void IsBonusPickedUp(Player* player, Map* map[])
             rect2[i].push_back(FloatRect(map[i]->objects_sprite[j].getPosition().x, map[i]->objects_sprite[j].getPosition().y,
                 map[i]->objects_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0, 
                 map[i]->objects_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0));
-            if (rect1.intersects(rect2[i][j]))
+            if (rect1.intersects(rect2[i][j]) && checker[i][j] == 0)
             {
-                if (dynamic_cast<Player3*>(player))
+                if (dynamic_cast<Player3*>(player) && j < map[i]->objects_sprite.size() / 2)
+                {
                     player->UpdateLives(10);
-                else
+                    map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() + j);
+                    checker[i].erase(checker[i].begin() + j);
+                }
+                else if (j < map[i]->objects_sprite.size() / 2 || dynamic_cast<Player1*>(player) || dynamic_cast<Player4*>(player))
+                {
                     player->UpdateScore();
-                map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() + j);
+                    map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() + j);
+                    checker[i].erase(checker[i].begin() + j);
+                }
+                else
+                {
+                    player->UpdateLives(-50);
+                    map[i]->explode(map[i]->objects_sprite[j]);
+                    checker[i][j] = 1;
+                }
             }
         }
 }
@@ -647,14 +668,14 @@ bool CheckOverlap(std::vector<Sprite> sprites, std::vector<Sprite> sprites2, int
 {
     for (int k = 0; k < j; ++k)
     {
-        FloatRect rect1(sprites[j].getPosition().x - PLAYER_WIDTH,
-            sprites[j].getPosition().y - PLAYER_HIGHT,
-            sprites[j].getTexture()->getSize().x * RESOLUTION / 1200.0 + 2* PLAYER_WIDTH,
-            sprites[j].getTexture()->getSize().y * RESOLUTION / 1200.0 + PLAYER_HIGHT * 2);
-        FloatRect rect2(sprites2[k].getPosition().x - PLAYER_WIDTH,
-            sprites2[k].getPosition().y - PLAYER_HIGHT,
-            sprites2[k].getTexture()->getSize().x * RESOLUTION / 1200.0 + 2 * PLAYER_WIDTH,
-            sprites2[k].getTexture()->getSize().y * RESOLUTION / 1200.0 + PLAYER_HIGHT * 2);
+        FloatRect rect1(sprites[j].getPosition().x,
+            sprites[j].getPosition().y,
+            sprites[j].getTexture()->getSize().x * RESOLUTION / 1200.0,
+            sprites[j].getTexture()->getSize().y * RESOLUTION / 1200.0);
+        FloatRect rect2(sprites2[k].getPosition().x,
+            sprites2[k].getPosition().y,
+            sprites2[k].getTexture()->getSize().x * RESOLUTION / 1200.0,
+            sprites2[k].getTexture()->getSize().y * RESOLUTION / 1200.0);
 
         if (rect1.intersects(rect2))
         {
@@ -800,25 +821,22 @@ int main()
             for (int j = 0; j < map[i]->objects_sprite.size(); j++)
             {
                 map[i]->objects_sprite[j].setPosition(map[i]->position.x + (rand() %
-                    (RESOLUTION / 2 - int(map[i]->objects_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0))),
+                    (RESOLUTION / 2 - int(map[i]->objects_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0) - SIZE_OF_THORNS * 2) +
+                    SIZE_OF_THORNS),
                     map[i]->position.y + (rand() %
-                        (RESOLUTION / 2 - int(map[i]->objects_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0))));
-                if (i == 0)
-                {
-                    map[i]->collisions_sprite[j].setPosition(map[i]->position.x + (rand() %
-                        (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0))),
-                        map[i]->position.y + (rand() %
-                            (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0))));
-                    if (CheckOverlap(map[i]->objects_sprite, map[i]->objects_sprite, j) || 
-                        CheckOverlap(map[i]->objects_sprite, map[i]->collisions_sprite, j) ||
-                        CheckOverlap(map[i]->collisions_sprite, map[i]->collisions_sprite, j))
-                        j--;
-                } 
-                else
-                    if (CheckOverlap(map[i]->objects_sprite, map[i]->objects_sprite, j))
-                        j--;
+                        (RESOLUTION / 2 - int(map[i]->objects_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0) - SIZE_OF_THORNS * 2)
+                        + SIZE_OF_THORNS));
+                if (CheckOverlap(map[i]->objects_sprite, map[i]->objects_sprite, j))
+                    j--;
+                std::cout << j << std::endl;
             }
         }
+        std::vector<int> collision_checker[NUMBER_OF_LOCATIONS];
+        for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
+            for (int j = 0; j < map[i]->objects_sprite.size(); j++)
+            {
+                collision_checker[i].push_back(0);
+            }
         Player* Main_player = new Player1();
         Enemy* enemy = new Warrior(map);
         Enemy* boss = new Boss(map);
@@ -850,7 +868,7 @@ int main()
                 //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
                 Transition_to_a_new_zone(Main_player, map);
                 //Main_player->UpdateScore();
-                IsBonusPickedUp(Main_player, map);
+                IsBonusPickedUp(Main_player, map, collision_checker);
                 game.Graphics(window, Main_player, map, enemy, boss, tank); // отрисовка карты и игрока
                 if (cl.getElapsedTime().asSeconds() >= 1) {
                     Main_player->score--;//обновляет таймер в секундах.
@@ -861,7 +879,6 @@ int main()
             else {
                 if (!lever)
                 {
-                    std::cout << "flag = true\n";
                     flag = true;
                 }
                 if (!flag)
@@ -959,7 +976,7 @@ int main()
                                     GameOver_time.restart();
                                     while (GameOver_time.getElapsedTime().asMilliseconds() <= 200) {};
                                     Main_player->hp = 100;
-                                    Main_player->score = 100;
+                                    Main_player->score = 30;
                                     Main_player->player_position = { 0,0 };
                                     flag = true;
                                     break;

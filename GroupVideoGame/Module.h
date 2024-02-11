@@ -25,7 +25,7 @@ using namespace sf;
 extern int RESOLUTION;
 extern int PLAYER_HIGHT;
 extern int PLAYER_WIDTH;
-#define SIZE_OF_THORNS 50
+extern int SIZE_OF_THORNS;
 #define NUMBER_OF_LOCATIONS 4
 struct Coordinates
 {
@@ -118,7 +118,7 @@ class Map
 {
 protected:
 	Sprite map_sprite;
-	Texture map_texture, objects_texture, collisions_texture;
+	Texture map_texture, objects_texture, collisions_texture, explosion_texture;
 public:
 	std::vector<Sprite> objects_sprite;
 	std::vector<Sprite> collisions_sprite;
@@ -128,6 +128,7 @@ public:
 	//рандомная генерация очков и врагов
 	//virtual void GenerateRandomScores() = 0;
 	void GenerateEnemy();
+	virtual void explode(Sprite& sprt) = 0;
 };
 
 class Map1 : public Map //статическое движение
@@ -137,7 +138,7 @@ public:
 	{
 		map_texture.loadFromFile("Room1_floor.png");
 		objects_texture.loadFromFile("time.png");
-		collisions_texture.loadFromFile("wall.png");
+		collisions_texture.loadFromFile("bomb.png");
 		map_sprite.setTexture(map_texture);
 		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		Sprite tmp;
@@ -148,14 +149,10 @@ public:
 			objects_sprite.push_back(tmp);
 			objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		}
-		Sprite tmp2;
-		tmp2.setTexture(collisions_texture);
-		for (int i = 0; i < 3; i++)
-		{
-			collisions_sprite.push_back(tmp2);
-			collisions_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
-			collisions_sprite[i].setRotation(rand() % 2);
-		}
+	}
+	void explode(Sprite& sprt)
+	{
+		sprt.setTexture(explosion_texture);
 	}
 	void draw_map(RenderWindow& window)
 	{
@@ -169,19 +166,34 @@ class Map2 : public Map //векторное движение
 public:
 	Map2()
 	{
+		explosion_texture.loadFromFile("explosion.png");
 		map_texture.loadFromFile("Room2_floor.png");
 		objects_texture.loadFromFile("time.png");
-		collisions_texture.loadFromFile("");
+		collisions_texture.loadFromFile("bomb.png");
 		map_sprite.setTexture(map_texture);
 		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		Sprite tmp;
 		tmp.setTexture(objects_texture);
+		Sprite tmp2;
+		tmp2.setTexture(collisions_texture);
 		int num = (rand() % OBJ_NUMBER + 1);
-		for (int i = 0; i < num; i++)
+		for (int i = 0; i < num * 2; i++)
 		{
-			objects_sprite.push_back(tmp);
-			objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+			if (i < num)
+			{
+				objects_sprite.push_back(tmp);
+				objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+			}
+			else
+			{
+				objects_sprite.push_back(tmp2);
+				objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+			}
 		}
+	}
+	void explode(Sprite& sprt)
+	{
+		sprt.setTexture(explosion_texture);
 	}
 	void draw_map(RenderWindow& window)
 	{
@@ -195,19 +207,34 @@ class Map3 : public Map //невидимка
 public:
 	Map3()
 	{
+		explosion_texture.loadFromFile("explosion.png");
 		map_texture.loadFromFile("Room3_floor.png");
 		objects_texture.loadFromFile("coin.png");
-		collisions_texture.loadFromFile("");
+		collisions_texture.loadFromFile("bomb.png");
 		map_sprite.setTexture(map_texture);
 		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		Sprite tmp;
 		tmp.setTexture(objects_texture);
+		Sprite tmp2;
+		tmp2.setTexture(collisions_texture);
 		int num = (rand() % OBJ_NUMBER + 1);
-		for (int i = 0; i < num; i++)
+		for (int i = 0; i < num * 2; i++)
 		{
-			objects_sprite.push_back(tmp);
-			objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+			if (i < num)
+			{
+				objects_sprite.push_back(tmp);
+				objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+			}
+			else
+			{
+				objects_sprite.push_back(tmp2);
+				objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+			}
 		}
+	}
+	void explode(Sprite& sprt)
+	{
+		sprt.setTexture(explosion_texture);
 	}
 	void draw_map(RenderWindow& window)
 	{
@@ -222,23 +249,17 @@ public:
 	Map4()
 	{
 		map_texture.loadFromFile("Room4_Boss_floor.png");
-		objects_texture.loadFromFile("");
-		collisions_texture.loadFromFile("");
 		map_sprite.setTexture(map_texture);
 		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
-		Sprite tmp;
-		tmp.setTexture(objects_texture);
-		int num = (rand() % OBJ_NUMBER + 1);
-		for (int i = 0; i < num; i++)
-		{
-			objects_sprite.push_back(tmp);
-			objects_sprite[i].setScale(RESOLUTION/1200.0, RESOLUTION / 1200.0);
-		}
 	}
 	void draw_map(RenderWindow& window)
 	{
 		map_sprite.setPosition(position.x, position.y);
 		window.draw(map_sprite);
+	}
+	void explode(Sprite& sprt)
+	{
+		sprt.setTexture(explosion_texture);
 	}
 };
 class Enemy
