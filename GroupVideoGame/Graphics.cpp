@@ -38,10 +38,9 @@ void draw_bonuses(RenderWindow& window, Map* map[])
 
 void draw_player(Player* player, RenderWindow& window)
 {
-	Sprite player_sprite(player->player_texture);
-	player_sprite.setPosition(player->player_position.x, player->player_position.y);
-	player_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
-	window.draw(player_sprite);
+	player->player_sprite.setPosition(player->player_position.x, player->player_position.y);
+	player->player_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+	window.draw(player->player_sprite);
 }
 void draw_lives(Player* player, int delta_health, RenderWindow& window)
 {
