@@ -76,6 +76,7 @@ void Enemy_radius(RenderWindow& window, Enemy* enemy)
 }
 void draw_border(RenderWindow& window, Sprite& border)
 {
+	
 	for (int i = 0; i < 1200.0 / SIZE_OF_THORNS; i++)
 	{
 		for (int j = 0; j < 1200.0 / SIZE_OF_THORNS; j++)
@@ -88,7 +89,7 @@ void draw_border(RenderWindow& window, Sprite& border)
 		}
 	}
 }
-void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Enemy* enemy, Enemy* boss, Enemy* tank)
+void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank)
 {
 	window.clear();
 	int delta_health = 0;
@@ -112,7 +113,8 @@ void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& bo
 	draw_enemy(tank, window, delta_health);
 	draw_boss(boss, window, delta_health);
 	draw_bonuses(window, map);
-	draw_lives(player, delta_health, window);
+	if (!dynamic_cast<Player3*>(player))
+		draw_lives(player, delta_health, window);
 	//draw_score(player, window);
 	if (dynamic_cast<Player1*>(player)) {
 		RectangleShape Fon_map1;
@@ -144,5 +146,6 @@ void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& bo
 		window.draw(Fon_map4);
 		window.draw(Fon_4);
 	}
+	window.draw(shader);
 	window.display();
 }

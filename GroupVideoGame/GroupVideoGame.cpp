@@ -360,10 +360,10 @@ void Player::UpdateScore()
 }
 bool Player::IsPlayerOutOfBounds()
 {
-    if (player_position.x > SIZE_OF_THORNS && 
-        player_position.x + PLAYER_WIDTH < RESOLUTION - SIZE_OF_THORNS &&
-        player_position.y > SIZE_OF_THORNS &&
-        player_position.y + PLAYER_HIGHT < RESOLUTION - SIZE_OF_THORNS)
+    if (player_position.x > SIZE_OF_THORNS - 20 && 
+        player_position.x + PLAYER_WIDTH < RESOLUTION - SIZE_OF_THORNS + 20 &&
+        player_position.y > SIZE_OF_THORNS - 20 &&
+        player_position.y + PLAYER_HIGHT < RESOLUTION - SIZE_OF_THORNS + 20)
         return false;
     return true;
 }
@@ -849,6 +849,11 @@ int main()
         Sprite border;
         border.setTexture(texture_border);
         border.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+        Texture texture_shader;
+        texture_shader.loadFromFile("shader.png");
+        Sprite shader;
+        shader.setTexture(texture_shader);
+        shader.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 
         Clock cl, limiter, GameOver_time;
         Event event;
@@ -876,7 +881,7 @@ int main()
                 Transition_to_a_new_zone(Main_player, map);
                 //Main_player->UpdateScore();
                 IsBonusPickedUp(Main_player, map, collision_checker);
-                game.Graphics(window, Main_player, map, border, enemy, boss, tank); // отрисовка карты и игрока
+                game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank); // отрисовка карты и игрока
                 if (cl.getElapsedTime().asSeconds() >= 1) {
                     Main_player->score--;//обновляет таймер в секундах.
                     std::cout << Main_player->score << "\n";
