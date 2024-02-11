@@ -36,9 +36,15 @@ void draw_bonuses(RenderWindow& window, Map* map[])
 			window.draw(map[i]->collisions_sprite[j]);
 }
 
-void draw_player(Player* player, RenderWindow& window)
+void draw_player(Player* player, RenderWindow& window, bool flag_attack)
 {
-	player->player_sprite.setPosition(player->player_position.x, player->player_position.y);
+	if (flag_attack) {
+		player->player_sprite.setPosition(player->player_position.x, player->player_position.y - RESOLUTION / 25);
+	}
+	else {
+		if (Player::side == 1) player->player_sprite.setPosition(player->player_position.x, player->player_position.y);
+		else player->player_sprite.setPosition(player->player_position.x + RESOLUTION / 25, player->player_position.y);
+	}
 	player->player_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 	window.draw(player->player_sprite);
 }
@@ -89,7 +95,7 @@ void draw_border(RenderWindow& window, Sprite& border)
 		}
 	}
 }
-void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank)
+void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, bool flag_attack)
 {
 	window.clear();
 	int delta_health = 0;
@@ -108,7 +114,7 @@ void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& bo
 	boss->Fight(player, boss);
 	tank->Fight(player, tank);
 	//отрисовка игрока и врагов
-	draw_player(player, window);
+	draw_player(player, window, flag_attack);
 	draw_enemy(enemy, window, delta_health);
 	draw_enemy(tank, window, delta_health);
 	draw_boss(boss, window, delta_health);

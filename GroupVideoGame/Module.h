@@ -55,7 +55,7 @@ public:
 		lives.setPosition(player_position.x + PLAYER_WIDTH / 6, player_position.y - 10);
 	}
 
-	virtual void UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame) = 0;
+	virtual void UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame, bool& flag_attack) = 0;
 	virtual bool CheckPosition() = 0;
 	void UpdateScore();
 	int UpdateLives(int delta_health);
@@ -68,27 +68,28 @@ public:
 	{
 		player_texture.loadFromFile("Samurai-Sprite1.png");
 		player_sprite.setTexture(player_texture);
-		player_sprite.setTextureRect(IntRect(180, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+		player_sprite.setTextureRect(IntRect(185, 45, 80, 100));
+		
 	}
-	void UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame);
+	void UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame, bool& flag_attack);
 	bool CheckPosition(); //проверка позиции объекта
 };
 class Player2 : public Player //векторное движение
 {
 public:
-	void UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame);
+	void UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame, bool& flag_attack);
 	bool CheckPosition() { return true; }
 	Player2()
 	{
 		player_texture.loadFromFile("Samurai-Sprites4.png");
 		player_sprite.setTexture(player_texture);
-		player_sprite.setTextureRect(IntRect(0, 45, PLAYER_WIDTH, PLAYER_HIGHT));
+		player_sprite.setTextureRect(IntRect(0, 45, 70, 90));
 	}
 };
 class Player3 : public Player //невидимка
 {
 public:
-	void UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame);
+	void UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame, bool& flag_attack);
 	bool CheckPosition() { return true; }
 	Player3()
 	{
@@ -97,20 +98,14 @@ public:
 };
 class Player4 : public Player //враги
 {
-private:
-	Texture attack_texture;
-	Sprite attack_sprite;
 public:
-	void UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame);
+	void UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame, bool& flag_attack);
 	bool CheckPosition() { return true; }
 	Player4()
 	{
 		player_texture.loadFromFile("Samurai-Sprite1.png");
 		player_sprite.setTexture(player_texture);
-		player_sprite.setTextureRect(IntRect(180, 45, PLAYER_WIDTH, PLAYER_HIGHT));
-
-		attack_texture.loadFromFile("Samurai-Sprites4.png");
-		attack_sprite.setTexture(attack_texture);
+		player_sprite.setTextureRect(IntRect(185, 45, 80, 100));
 	}
 };
 
@@ -419,7 +414,7 @@ public:
 		Fon_2.setPosition(0, 0);
 		Fon_2.setScale((float)RESOLUTION / Fon_map2.getSize().x, (float)RESOLUTION / Fon_map2.getSize().y);
 	}
-	void Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank);
+	void Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, bool flag_attack);
 	bool Is_player_dead(int hp, int score);
 	bool Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss, int score);
 };

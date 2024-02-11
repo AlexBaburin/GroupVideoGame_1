@@ -13,8 +13,8 @@ int SIZE_OF_THORNS = 50;
 int Player::hp = 100;
 int Player::side = 1;//1=смотрит вправо; 2=смотрит влево;
 Coordinates Player::player_position = { 0, 0 };
-int Player::score = 30;
-int Player::damage = 1500;
+int Player::score = 100;
+int Player::damage = 500;
 Keyboard::Key prev_event = Keyboard::Key::T;
 Keyboard::Key attack_delay = Keyboard::Key::T;
 
@@ -367,7 +367,7 @@ bool Player::IsPlayerOutOfBounds()
         return false;
     return true;
 }
-void Player1::UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame)
+void Player1::UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame, bool& flag_attack)
 {
     while (window.pollEvent(event))
     {
@@ -379,33 +379,33 @@ void Player1::UpdatePosition(RenderWindow& window, Event& event, float time, flo
         {
             player_position.y -= SPEED;
             prev_event = Keyboard::Up;
-            if (side == 1) player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, PLAYER_WIDTH, PLAYER_HIGHT));
-            else  player_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 370, -PLAYER_WIDTH, PLAYER_HIGHT));
+            if (side == 1) player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, 80, 100));
+            else  player_sprite.setTextureRect(IntRect(current_frame * (int)time + 80, 370, -80, 100));
         }
         else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player_position.y += SPEED;
             prev_event = Keyboard::Down;
-            if (side == 1) player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, PLAYER_WIDTH, PLAYER_HIGHT));
-            else  player_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 370, -PLAYER_WIDTH, PLAYER_HIGHT));
+            if (side == 1) player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, 80, 100));
+            else  player_sprite.setTextureRect(IntRect(current_frame * (int)time + 80, 370, -80, 100));
         }
         else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player_position.x -= SPEED;
             prev_event = Keyboard::Left;
-            player_sprite.setTextureRect(IntRect(current_frame*(int)time+ PLAYER_WIDTH, 370, -PLAYER_WIDTH, PLAYER_HIGHT));
+            player_sprite.setTextureRect(IntRect(current_frame*(int)time+ 80, 370, -80, 100));
             side = 2;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
             player_position.x += SPEED;
             prev_event = Keyboard::Right;
-            player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, PLAYER_WIDTH, PLAYER_HIGHT));
+            player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, 80, 100));
             side = 1;
         }
         else {
-            if(side==1)player_sprite.setTextureRect(IntRect(180, 45, PLAYER_WIDTH, PLAYER_HIGHT));
-            else player_sprite.setTextureRect(IntRect(180+ PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
+            if(side==1)player_sprite.setTextureRect(IntRect(185, 45, 80, 100));
+            else player_sprite.setTextureRect(IntRect(265, 45, -80, 100));
         }
     }
     if (IsPlayerOutOfBounds())
@@ -413,7 +413,7 @@ void Player1::UpdatePosition(RenderWindow& window, Event& event, float time, flo
         UpdateLives(-1000);
     }
 }
-void Player2::UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame)
+void Player2::UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame, bool& flag_attack)
 {
     while (window.pollEvent(event))
     {
@@ -443,33 +443,33 @@ void Player2::UpdatePosition(RenderWindow& window, Event& event, float time, flo
     if (prev_event == Keyboard::Up)
     {
         player_position.y -= SPEED;
-        if(side==1) player_sprite.setTextureRect(IntRect(0, 45, PLAYER_WIDTH, PLAYER_HIGHT));
-        else player_sprite.setTextureRect(IntRect(PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
+        if(side==1) player_sprite.setTextureRect(IntRect(0, 45, 70, 90));
+        else player_sprite.setTextureRect(IntRect(70, 45, -70, 90));
     }
     else if (prev_event == Keyboard::Down)
     {
         player_position.y += SPEED;
-        if (side == 1) player_sprite.setTextureRect(IntRect(0, 45, PLAYER_WIDTH, PLAYER_HIGHT));
-        else player_sprite.setTextureRect(IntRect(PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
+        if (side == 1) player_sprite.setTextureRect(IntRect(0, 45, 70, 90));
+        else player_sprite.setTextureRect(IntRect(70, 45, -70, 90));
     }
     else if (prev_event == Keyboard::Left)
     {
         player_position.x -= SPEED;
-        if (side == 1) player_sprite.setTextureRect(IntRect(0, 45, PLAYER_WIDTH, PLAYER_HIGHT));
-        else player_sprite.setTextureRect(IntRect(PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
+        if (side == 1) player_sprite.setTextureRect(IntRect(00, 45, 70, 90));
+        else player_sprite.setTextureRect(IntRect(70, 45, -70, 90));
     }
     else if (prev_event == Keyboard::Right)
     {
         player_position.x += SPEED;
-        if (side == 1) player_sprite.setTextureRect(IntRect(0, 45, PLAYER_WIDTH, PLAYER_HIGHT));
-        else player_sprite.setTextureRect(IntRect(PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
+        if (side == 1) player_sprite.setTextureRect(IntRect(0, 45, 70, 90));
+        else player_sprite.setTextureRect(IntRect(70, 45, -70, 90));
     }
     if (IsPlayerOutOfBounds())
     {
         UpdateLives(-1000);
     }
 }
-void Player3::UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame)
+void Player3::UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame, bool& flag_attack)
 {
     while (window.pollEvent(event))
     {
@@ -503,7 +503,7 @@ void Player3::UpdatePosition(RenderWindow& window, Event& event, float time, flo
         UpdateLives(-1000);
     }
 }
-void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame)
+void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame, bool& flag_attack)
 {
     while (window.pollEvent(event))
     {
@@ -514,17 +514,11 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, flo
         if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
         {
             player_position.y -= SPEED;
-            if (side == 1) player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, PLAYER_WIDTH, PLAYER_HIGHT));
-            else  player_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 370, -PLAYER_WIDTH, PLAYER_HIGHT));
+            if (side == 1) player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, 80, 100));
+            else  player_sprite.setTextureRect(IntRect(current_frame * (int)time + 80, 370, -80, 100));
             if (Keyboard::isKeyPressed(Keyboard::E))
             {
                 attack_delay = Keyboard::E;
-                if (time > 6) {
-                    time = 1;
-                    current_frame = 0;
-                }
-                if (side == 1) attack_sprite.setTextureRect(IntRect(current_frame * (int)time, 45, PLAYER_WIDTH, PLAYER_HIGHT));
-                else  attack_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
             }
             else
             {
@@ -534,17 +528,12 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, flo
         else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
             player_position.y += SPEED;
-            if (side == 1) player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, PLAYER_WIDTH, PLAYER_HIGHT));
-            else  player_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 370, -PLAYER_WIDTH, PLAYER_HIGHT));
+            if (side == 1) player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, 80, 100));
+            else  player_sprite.setTextureRect(IntRect(current_frame * (int)time + 80, 370, -80, 100));
             if (Keyboard::isKeyPressed(Keyboard::E))
             {
                 attack_delay = Keyboard::E;
-                if (time > 6) {
-                    time = 1;
-                    current_frame = 0;
-                }
-                if (side == 1) attack_sprite.setTextureRect(IntRect(current_frame * (int)time, 45, PLAYER_WIDTH, PLAYER_HIGHT));
-                else  attack_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
+                
             }
             else
             {
@@ -554,17 +543,12 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, flo
         else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
             player_position.x -= SPEED;
-            player_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 370, -PLAYER_WIDTH, PLAYER_HIGHT));
+            player_sprite.setTextureRect(IntRect(current_frame * (int)time + 80, 370, -80, 100));
             side = 2;
             if (Keyboard::isKeyPressed(Keyboard::E))
             {
                 attack_delay = Keyboard::E;
-                if (time > 6) {
-                    time = 1;
-                    current_frame = 0;
-                }
-                if (side == 1) attack_sprite.setTextureRect(IntRect(current_frame * (int)time, 45, PLAYER_WIDTH, PLAYER_HIGHT));
-                else  attack_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
+                
             }
             else
             {
@@ -574,17 +558,12 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, flo
         else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
             player_position.x += SPEED;
-            player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, PLAYER_WIDTH, PLAYER_HIGHT));
+            player_sprite.setTextureRect(IntRect(current_frame * (int)time, 370, 80, 100));
             side = 1;
             if (Keyboard::isKeyPressed(Keyboard::E))
             {
                 attack_delay = Keyboard::E;
-                if (time > 6) {
-                    time = 1;
-                    current_frame = 0;
-                }
-                if (side == 1) attack_sprite.setTextureRect(IntRect(current_frame * (int)time, 45, PLAYER_WIDTH, PLAYER_HIGHT));
-                else  attack_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
+                
             }
             else
             {
@@ -594,17 +573,12 @@ void Player4::UpdatePosition(RenderWindow& window, Event& event, float time, flo
         else if (Keyboard::isKeyPressed(Keyboard::E))
         {
             attack_delay = Keyboard::E;
-            if (time > 6) {
-                time = 1;
-                current_frame = 0;
-            }
-            if (side == 1) attack_sprite.setTextureRect(IntRect(current_frame * (int)time, 45, PLAYER_WIDTH, PLAYER_HIGHT));
-            else  attack_sprite.setTextureRect(IntRect(current_frame * (int)time + PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
+            flag_attack = true;
         }
         else
         {
-            if (side == 1)player_sprite.setTextureRect(IntRect(180, 45, PLAYER_WIDTH, PLAYER_HIGHT));
-            else player_sprite.setTextureRect(IntRect(180 + PLAYER_WIDTH, 45, -PLAYER_WIDTH, PLAYER_HIGHT));
+            if (side == 1)player_sprite.setTextureRect(IntRect(185, 45, 80, 100));
+            else player_sprite.setTextureRect(IntRect(265, 45, -80, 100));
             attack_delay = Keyboard::T;
         }
     }
@@ -728,11 +702,6 @@ bool Game::Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss,
     if (boss->hp <= 0)
     {
         bool flag = false;
-        Font font;
-        font.loadFromFile("Text.ttf");
-        Text text_score(L"Оставшееся время: " + std::to_string(score), font, 50);
-        text_score.setStyle(Text::Style::Italic && Text::Style::Bold);
-        text_score.setPosition(RESOLUTION / 4 - RESOLUTION / 12, RESOLUTION / 2 + RESOLUTION / 8);
         Clock time_button;
 
         Texture texture_background, texture_button1, texture_button2;
@@ -745,10 +714,17 @@ bool Game::Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss,
         button2.setTexture(texture_button2);
         background.setPosition(0, 0);
         background.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
-        button1.setPosition(RESOLUTION / 2 - RESOLUTION / 4 - RESOLUTION / 12, RESOLUTION / 2 + RESOLUTION / 6);
+        button1.setPosition(RESOLUTION / 6, RESOLUTION / 1.5);
         button1.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
-        button2.setPosition(RESOLUTION / 2 - RESOLUTION / 4 - RESOLUTION / 12, RESOLUTION / 2 + RESOLUTION / 6);
+        button2.setPosition(RESOLUTION / 6, RESOLUTION / 1.5);
         button2.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+
+        Font font;
+        font.loadFromFile("Text.ttf");
+        Text text_score(L"Оставшееся время: " + std::to_string(score), font, 50);
+        text_score.setStyle(Text::Style::Italic && Text::Style::Bold);
+        text_score.setScale((float)RESOLUTION / texture_background.getSize().x, (float)RESOLUTION / texture_background.getSize().y);
+        text_score.setPosition(RESOLUTION / 12, RESOLUTION / 1.7);
 
         Event event;
         while (window.isOpen())
@@ -859,6 +835,7 @@ int main()
         Event event;
         Image icon;
         float time_frame = 1, current_frame = 185;
+        bool flag_attack = false;
         RenderWindow window(VideoMode(RESOLUTION, RESOLUTION), "Video game");
         icon.loadFromFile("icon.png");
         window.setIcon(128, 128, icon.getPixelsPtr()); //установка иконки игры (хз, поставил из своей игры, можете поменять)
@@ -876,12 +853,25 @@ int main()
                     current_frame = 185;
                 }
                 else time_frame += 0.3;
-                Main_player->UpdatePosition(window, event, time_frame, current_frame); //вывод новой позиции при нажатии клавиши, проверка пересечения 
+                Main_player->UpdatePosition(window, event, time_frame, current_frame, flag_attack); //вывод новой позиции при нажатии клавиши, проверка пересечения 
+
+                if (flag_attack) {
+                    time_frame = 1;
+                    do {
+                        time_frame += 0.05;
+                        if (Player::side == 1) Main_player->player_sprite.setTextureRect(IntRect(current_frame * (int)time_frame, 620, 130, 150));
+                        else  Main_player->player_sprite.setTextureRect(IntRect(current_frame * (int)time_frame + 130, 620, -130, 150));
+                        game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, flag_attack); // отрисовка карты и игрока
+                    } while (time_frame <= 6);
+                    flag_attack = false;
+                    if (Player::side == 1)Main_player->player_sprite.setTextureRect(IntRect(185, 45, 80, 100));
+                    else Main_player->player_sprite.setTextureRect(IntRect(265, 45, -80, 100));
+                }
                 //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
                 Transition_to_a_new_zone(Main_player, map);
                 //Main_player->UpdateScore();
                 IsBonusPickedUp(Main_player, map, collision_checker);
-                game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank); // отрисовка карты и игрока
+                game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, flag_attack); // отрисовка карты и игрока
                 if (cl.getElapsedTime().asSeconds() >= 1) {
                     Main_player->score--;//обновляет таймер в секундах.
                     std::cout << Main_player->score << "\n";
