@@ -851,108 +851,117 @@ int main()
                 }
             }
             else {
-                //Экран пройгрыша
-                Texture Game_over_texture;
-                Game_over_texture.loadFromFile("Game_over.png");
-                Sprite Game_over;
-                Game_over.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
-                Game_over.setTexture(Game_over_texture);
-                Game_over.setPosition(0, 0);
-
-                //Инициализация кнопки и его состояний
-                Texture Button_texture, Button_texture2;
-
-                Button_texture.loadFromFile("Button1.png");//первое состояние кнопки
-                Button_texture2.loadFromFile("Button2.png");//второе состояние кнопки
-
-                Sprite Button, Button2;
-
-                Button.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
-                Button.setTexture(Button_texture);
-                Button.setPosition(RESOLUTION / 6, RESOLUTION / 1.5);
-
-                Button2.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
-                Button2.setTexture(Button_texture2);
-                Button2.setPosition(RESOLUTION / 6, RESOLUTION / 1.5);
-
-                //Шрифт для вывода оставшегося времени
-                Font font;
-                font.loadFromFile("Text.ttf");
-                Text text("", font, 50);
-                text.setStyle(Text::Italic);
-                text.setFillColor(Color(230, 230, 230));
-                text.setString(L"Оставшееся время: " + std::to_string(Main_player->score) + L" сек");
-                text.setPosition(RESOLUTION / 12, RESOLUTION / 2);
-                text.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
-
-                //Анимация экрана окончания
-                if (!flag_EndGame) {
-                    RectangleShape Black_helper;
-                    for (int i = 255; i >= 0; i--) {
-                        GameOver_time.restart();
-                        Black_helper.setFillColor(Color(0, 0, 0, i));
-                        Black_helper.setSize(Vector2f(RESOLUTION, RESOLUTION / 4));
-                        Black_helper.setPosition(0, RESOLUTION / 12);
-                        window.clear();
-                        window.draw(Game_over);
-                        window.draw(Black_helper);
-                        Black_helper.setFillColor(Color(0, 0, 0));
-                        Black_helper.setPosition(0, RESOLUTION / 3);
-                        window.draw(Black_helper);
-                        window.display();
-                        while (GameOver_time.getElapsedTime().asMilliseconds() <= 5) {};
-                    }
-                    for (int i = 255; i >= 0; i--) {
-                        GameOver_time.restart();
-                        Black_helper.setFillColor(Color(0, 0, 0, i));
-                        Black_helper.setSize(Vector2f(RESOLUTION, RESOLUTION / 4));
-                        Black_helper.setPosition(0, RESOLUTION / 3);
-                        window.clear();
-                        window.draw(Game_over);
-                        window.draw(Black_helper);
-                        window.display();
-                        while (GameOver_time.getElapsedTime().asMilliseconds() <= 5) {};
-                    }
-                    flag_EndGame = true;
-                }
-
-                window.clear();
-                window.draw(Game_over);
-                window.draw(text);
-                window.draw(Button);
-                window.display();
-                //Обработка нажатия кнопки + перезапуск игры
-                while (window.pollEvent(event))
+                if (!lever)
                 {
-                    if (event.type == Event::Closed)
-                    {
-                        window.close();
-                    }
-                    else if (event.type == Event::MouseButtonPressed)
-                    {
-                        if (event.mouseButton.button == Mouse::Left)
-                        {
-                            int x = event.mouseButton.x;
-                            int y = event.mouseButton.y;
-                            if (Button.getGlobalBounds().contains(x, y)) {
+                    std::cout << "flag = true\n";
+                    flag = true;
+                }
+                if (!flag)
+                {
+                    //Экран пройгрыша
+                    Texture Game_over_texture;
+                    Game_over_texture.loadFromFile("Game_over.png");
+                    Sprite Game_over;
+                    Game_over.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
+                    Game_over.setTexture(Game_over_texture);
+                    Game_over.setPosition(0, 0);
 
-                                window.clear();
-                                window.draw(Game_over);
-                                window.draw(text);
-                                window.draw(Button2);
-                                window.display();
-                                GameOver_time.restart();
-                                while (GameOver_time.getElapsedTime().asMilliseconds() <= 200) {};
-                                Main_player->hp = 100;
-                                Main_player->score = 100;
-                                Main_player->player_position = { 0,0 };
-                                flag = true;
-                                break;
+                    //Инициализация кнопки и его состояний
+                    Texture Button_texture, Button_texture2;
+
+                    Button_texture.loadFromFile("Button1.png");//первое состояние кнопки
+                    Button_texture2.loadFromFile("Button2.png");//второе состояние кнопки
+
+                    Sprite Button, Button2;
+
+                    Button.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
+                    Button.setTexture(Button_texture);
+                    Button.setPosition(RESOLUTION / 6, RESOLUTION / 1.5);
+
+                    Button2.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
+                    Button2.setTexture(Button_texture2);
+                    Button2.setPosition(RESOLUTION / 6, RESOLUTION / 1.5);
+
+                    //Шрифт для вывода оставшегося времени
+                    Font font;
+                    font.loadFromFile("Text.ttf");
+                    Text text("", font, 50);
+                    text.setStyle(Text::Italic);
+                    text.setFillColor(Color(230, 230, 230));
+                    text.setString(L"Оставшееся время: " + std::to_string(Main_player->score) + L" сек");
+                    text.setPosition(RESOLUTION / 12, RESOLUTION / 2);
+                    text.setScale((float)RESOLUTION / Game_over_texture.getSize().x, (float)RESOLUTION / Game_over_texture.getSize().y);
+
+                    //Анимация экрана окончания
+                    if (!flag_EndGame) {
+                        RectangleShape Black_helper;
+                        for (int i = 255; i >= 0; i--) {
+                            GameOver_time.restart();
+                            Black_helper.setFillColor(Color(0, 0, 0, i));
+                            Black_helper.setSize(Vector2f(RESOLUTION, RESOLUTION / 4));
+                            Black_helper.setPosition(0, RESOLUTION / 12);
+                            window.clear();
+                            window.draw(Game_over);
+                            window.draw(Black_helper);
+                            Black_helper.setFillColor(Color(0, 0, 0));
+                            Black_helper.setPosition(0, RESOLUTION / 3);
+                            window.draw(Black_helper);
+                            window.display();
+                            while (GameOver_time.getElapsedTime().asMilliseconds() <= 5) {};
+                        }
+                        for (int i = 255; i >= 0; i--) {
+                            GameOver_time.restart();
+                            Black_helper.setFillColor(Color(0, 0, 0, i));
+                            Black_helper.setSize(Vector2f(RESOLUTION, RESOLUTION / 4));
+                            Black_helper.setPosition(0, RESOLUTION / 3);
+                            window.clear();
+                            window.draw(Game_over);
+                            window.draw(Black_helper);
+                            window.display();
+                            while (GameOver_time.getElapsedTime().asMilliseconds() <= 5) {};
+                        }
+                        flag_EndGame = true;
+                    }
+
+                    window.clear();
+                    window.draw(Game_over);
+                    window.draw(text);
+                    window.draw(Button);
+                    window.display();
+                    //Обработка нажатия кнопки + перезапуск игры
+                    while (window.pollEvent(event))
+                    {
+                        if (event.type == Event::Closed)
+                        {
+                            window.close();
+                        }
+                        else if (event.type == Event::MouseButtonPressed)
+                        {
+                            if (event.mouseButton.button == Mouse::Left)
+                            {
+                                int x = event.mouseButton.x;
+                                int y = event.mouseButton.y;
+                                if (Button.getGlobalBounds().contains(x, y)) {
+
+                                    window.clear();
+                                    window.draw(Game_over);
+                                    window.draw(text);
+                                    window.draw(Button2);
+                                    window.display();
+                                    GameOver_time.restart();
+                                    while (GameOver_time.getElapsedTime().asMilliseconds() <= 200) {};
+                                    Main_player->hp = 100;
+                                    Main_player->score = 100;
+                                    Main_player->player_position = { 0,0 };
+                                    flag = true;
+                                    break;
+                                }
                             }
                         }
                     }
+                    if (flag)break;
                 }
-                if (flag)break;
+                else break;          
             }
         }
     } while (flag);
