@@ -803,7 +803,7 @@ int main()
                     (RESOLUTION / 2 - int(map[i]->objects_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0))),
                     map[i]->position.y + (rand() %
                         (RESOLUTION / 2 - int(map[i]->objects_sprite[j].getTexture()->getSize().y * RESOLUTION / 1200.0))));
-                /*if (i == 0)
+                if (i == 0)
                 {
                     map[i]->collisions_sprite[j].setPosition(map[i]->position.x + (rand() %
                         (RESOLUTION / 2 - int(map[i]->collisions_sprite[j].getTexture()->getSize().x * RESOLUTION / 1200.0))),
@@ -814,7 +814,7 @@ int main()
                         CheckOverlap(map[i]->collisions_sprite, map[i]->collisions_sprite, j))
                         j--;
                 } 
-                else */
+                else
                     if (CheckOverlap(map[i]->objects_sprite, map[i]->objects_sprite, j))
                         j--;
             }

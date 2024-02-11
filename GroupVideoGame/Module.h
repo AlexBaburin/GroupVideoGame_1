@@ -148,10 +148,11 @@ public:
 			objects_sprite.push_back(tmp);
 			objects_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 		}
-		tmp.setTexture(collisions_texture);
-		for (int i = 0; i < num; i++)
+		Sprite tmp2;
+		tmp2.setTexture(collisions_texture);
+		for (int i = 0; i < 3; i++)
 		{
-			collisions_sprite.push_back(tmp);
+			collisions_sprite.push_back(tmp2);
 			collisions_sprite[i].setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 			collisions_sprite[i].setRotation(rand() % 2);
 		}

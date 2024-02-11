@@ -31,9 +31,9 @@ void draw_bonuses(RenderWindow& window, Map* map[])
 	for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
 		for (int j = 0; j < map[i]->objects_sprite.size(); j++)
 			window.draw(map[i]->objects_sprite[j]);
-	/*for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
+	for (int i = 0; i < NUMBER_OF_LOCATIONS; i++)
 		for (int j = 0; j < map[i]->collisions_sprite.size(); j++)
-			window.draw(map[i]->collisions_sprite[j]); */
+			window.draw(map[i]->collisions_sprite[j]);
 }
 
 void draw_player(Player* player, RenderWindow& window)
