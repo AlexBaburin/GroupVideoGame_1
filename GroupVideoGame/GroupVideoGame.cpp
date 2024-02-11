@@ -5,7 +5,7 @@
 using namespace sf;
 
 #define SPEED 5
-int RESOLUTION = 1200;
+int RESOLUTION = 800;
 int PLAYER_HIGHT = RESOLUTION / 12;
 int PLAYER_WIDTH = int(RESOLUTION * 85.0 / 1200);
 #define THROW 75
