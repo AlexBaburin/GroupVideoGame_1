@@ -794,6 +794,7 @@ bool Game::Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss,
     }
     return true;
 }
+
 int main()
 {
     bool flag;
@@ -842,7 +843,13 @@ int main()
         Enemy* boss = new Boss(map);
         Enemy* tank = new Tank(map);
         GenerateRandomPosition(Main_player, map); // генерирование случайной позиции в начальной локации
-        /*enemy->GenerateRandomPosition(map);*/ // генерирование случайной позиции врагов
+
+        Texture texture_border;
+        texture_border.loadFromFile("border.png");
+        Sprite border;
+        border.setTexture(texture_border);
+        border.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
+
         Clock cl, limiter, GameOver_time;
         Event event;
         Image icon;
@@ -869,7 +876,7 @@ int main()
                 Transition_to_a_new_zone(Main_player, map);
                 //Main_player->UpdateScore();
                 IsBonusPickedUp(Main_player, map, collision_checker);
-                game.Graphics(window, Main_player, map, enemy, boss, tank); // отрисовка карты и игрока
+                game.Graphics(window, Main_player, map, border, enemy, boss, tank); // отрисовка карты и игрока
                 if (cl.getElapsedTime().asSeconds() >= 1) {
                     Main_player->score--;//обновляет таймер в секундах.
                     std::cout << Main_player->score << "\n";

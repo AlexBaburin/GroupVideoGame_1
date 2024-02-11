@@ -74,11 +74,26 @@ void Enemy_radius(RenderWindow& window, Enemy* enemy)
 		window.draw(fieldDamage);
 	}
 }
-void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy, Enemy* boss, Enemy* tank)
+void draw_border(RenderWindow& window, Sprite& border)
+{
+	for (int i = 0; i < 1200.0 / SIZE_OF_THORNS; i++)
+	{
+		for (int j = 0; j < 1200.0 / SIZE_OF_THORNS; j++)
+		{
+			if ((!i && j) || (i && !j) || (!i && !j) || (i == 1200.0 / SIZE_OF_THORNS - 1 && j) || (j == 1200.0 / SIZE_OF_THORNS - 1 && i))
+			{
+				border.setPosition(i * SIZE_OF_THORNS * RESOLUTION / 1200.0, j * SIZE_OF_THORNS * RESOLUTION / 1200.0);
+				window.draw(border);
+			}
+		}
+	}
+}
+void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Enemy* enemy, Enemy* boss, Enemy* tank)
 {
 	window.clear();
 	int delta_health = 0;
 	draw_full_map(window, map); //отрисовка всей карты
+	draw_border(window, border); //отрисовка границы
 	//вычисления для врагов
 	Enemy_radius(window, enemy);
 	Enemy_radius(window, boss);

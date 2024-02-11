@@ -419,7 +419,7 @@ public:
 		Fon_2.setPosition(0, 0);
 		Fon_2.setScale((float)RESOLUTION / Fon_map2.getSize().x, (float)RESOLUTION / Fon_map2.getSize().y);
 	}
-	void Graphics(RenderWindow& window, Player* player, Map* map[], Enemy* enemy, Enemy* boss, Enemy* tank);
+	void Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Enemy* enemy, Enemy* boss, Enemy* tank);
 	bool Is_player_dead(int hp, int score);
 	bool Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss, int score);
 };
