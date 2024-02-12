@@ -931,8 +931,8 @@ int main()
                 //границ 4-х зон и границ карты (вызывает update lives когда мёртв)
                 Transition_to_a_new_zone(Main_player, map);
                 //Main_player->UpdateScore();
-                IsBonusPickedUp(Main_player, map, collision_checker);
-                game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, flag_attack); // отрисовка карты и игрока
+                IsBonusPickedUp(Main_player, map, collision_checker, bomb_sound, hp_sound, time_sound);
+                game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, boss_punch, flag_attack, scoreText); // отрисовка карты и игрока
                 if (cl.getElapsedTime().asSeconds() >= 1) {
                     Main_player->score--;//обновляет таймер в секундах.
                     std::cout << Main_player->score << "\n";
