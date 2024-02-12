@@ -77,6 +77,9 @@ public:
 };
 class Player2 : public Player //векторное движение
 {
+private:
+	Sound ice_walking;
+	SoundBuffer ice_walking_sound;
 public:
 	void UpdatePosition(RenderWindow& window, Event& event, float time, float current_frame, bool& flag_attack);
 	bool CheckPosition() { return true; }
@@ -85,6 +88,9 @@ public:
 		player_texture.loadFromFile("Samurai-Sprites4.png");
 		player_sprite.setTexture(player_texture);
 		player_sprite.setTextureRect(IntRect(0, 45, 70, 90));
+		ice_walking_sound.loadFromFile("IceWalking.wav");
+		ice_walking.setBuffer(ice_walking_sound);
+		ice_walking.setVolume(15);
 	}
 };
 class Player3 : public Player //невидимка
@@ -286,7 +292,7 @@ public:
 	int prev_index;
 	Coordinates player_position;
 public:
-	virtual void Fight(Player* player, Enemy* enemy) = 0;
+	virtual void Fight(Player* player, Enemy* enemy, Sound& boss_punch) = 0;
 	virtual void GenerateRandomPosition(Map* map[]) = 0;
 	virtual void DeathEnemy(Enemy* enemy) = 0;
 	virtual bool CheckPosition(Map* map[]) = 0;
@@ -321,7 +327,7 @@ public:
 		toggle = true;
 		death = false;
 	}
-	void Fight(Player* player, Enemy* enemy);
+	void Fight(Player* player, Enemy* enemy, Sound& boss_punch);
 	void DeathEnemy(Enemy* enemy);
 	void GenerateRandomPosition(Map* map[]);
 	bool CheckPosition(Map* map[]);
@@ -354,7 +360,7 @@ public:
 		toggle = true;
 		death = false;
 	}
-	void Fight(Player* player, Enemy* enemy);
+	void Fight(Player* player, Enemy* enemy, Sound& boss_punch);
 	void DeathEnemy(Enemy* enemy);
 	void GenerateRandomPosition(Map* map[]);
 	bool CheckPosition(Map* map[]);
@@ -370,7 +376,7 @@ public:
 		GenerateRandomPosition(map);
 		enemy_sprite.setPosition(Vector2f(player_position.x, player_position.y));
 		enemy_sprite.setOrigin(Vector2f(BOSS_WIDTH / 2, BOSS_HIGHT / 2));
-		hp = RESOLUTION;
+		hp = RESOLUTION/3;
 		font.loadFromFile("Text.ttf");
 		lives.setFillColor(Color::Red);
 		lives.setString("HP:" + std::to_string(hp));
@@ -392,7 +398,7 @@ public:
 		toggle = true;
 		death = false;
 	}
-	void Fight(Player* player, Enemy* enemy);
+	void Fight(Player* player, Enemy* enemy, Sound& boss_punch);
 	void DeathEnemy(Enemy* enemy);
 	void GenerateRandomPosition(Map* map[]);
 	bool CheckPosition(Map* map[]);
@@ -404,7 +410,39 @@ class Game
 private:
 	Texture Fon_map2, Fon_map4;
 	Sprite Fon_2, Fon_4;
+	Music end_game_music, victory_music;
+	Music background1, background2, background3, background4 ;
 public:
+	void PlayMusic_background(Player*pl) {
+		background1.pause();
+		background2.pause();
+		background3.pause();
+		background4.pause();
+		if (dynamic_cast<Player1*>(pl)) {
+			background1.play();
+		}
+		if (dynamic_cast<Player2*>(pl)) {
+			background2.play();
+		}
+		if (dynamic_cast<Player3*>(pl)) {
+			background3.play();
+		}
+		if (dynamic_cast<Player4*>(pl)) {
+			background4.play();
+		}
+	}
+	void StopMusic_background() {
+		background1.stop();
+		background2.stop();
+		background3.stop();
+		background4.stop();
+	}
+	void PlayMusic_end() {
+		end_game_music.play();
+	}
+	void StopMusic_end() {
+		end_game_music.stop();
+	}
 	Game() {
 		Fon_map4.loadFromFile("Map_4_fon.png");
 		Fon_4.setTexture(Fon_map4);
@@ -415,8 +453,24 @@ public:
 		Fon_2.setTexture(Fon_map2);
 		Fon_2.setPosition(0, 0);
 		Fon_2.setScale((float)RESOLUTION / Fon_map2.getSize().x, (float)RESOLUTION / Fon_map2.getSize().y);
+
+		background1.openFromFile("Map1.wav");
+		background2.openFromFile("Map2.wav");
+		background3.openFromFile("Map3.wav");
+		background4.openFromFile("Map4.wav");
+
+		background1.setLoop(true);
+		background2.setLoop(true);
+		background3.setLoop(true);
+		background4.setLoop(true);
+
+		end_game_music.openFromFile("EndGame.wav");
+		end_game_music.setLoop(true);
+
+		victory_music.openFromFile("Victory.wav");
+		victory_music.setLoop(true);
 	}
-	void Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, bool flag_attack);
+	void Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, Sound& boss_punch, bool flag_attack);
 	bool Is_player_dead(int hp, int score);
-	bool Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss, int score);
+	bool Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss, int score, bool& flag_music);
 };

@@ -1,5 +1,5 @@
 #include "Module.h"
-#include "Graphics.h"
+//#include "Graphics.h"
 using namespace sf;
 
 void draw_enemy(Enemy* enemy, RenderWindow& window, int delta_health)
@@ -92,7 +92,7 @@ void draw_border(RenderWindow& window, Sprite& border)
 		}
 	}
 }
-void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, bool flag_attack)
+void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, Sound& boss_punch, bool flag_attack)
 {
 	window.clear();
 	int delta_health = 0;
@@ -107,9 +107,9 @@ void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& bo
 	boss->DeathEnemy(boss);
 	tank->DeathEnemy(tank);
 
-	enemy->Fight(player, enemy);
-	boss->Fight(player, boss);
-	tank->Fight(player, tank);
+	enemy->Fight(player, enemy, boss_punch);
+	boss->Fight(player, boss, boss_punch);
+	tank->Fight(player, tank, boss_punch);
 	//отрисовка игрока и врагов
 	draw_player(player, window, flag_attack);
 	draw_enemy(enemy, window, delta_health);

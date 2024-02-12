@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #include <vector>
 #include "Module.h"
-#include "Graphics.h"
+//#include "Graphics.h"
 using namespace sf;
 
 int RESOLUTION = 1200;
@@ -33,14 +33,14 @@ void FuncOfTrow(Player* player, Enemy* boss)
             else
                 player->player_position.y += THROW;
 }
-void Boss::Fight(Player* player, Enemy* boss)
+void Boss::Fight(Player* player, Enemy* boss, Sound& boss_punch)
 {
     if (time_of_frame > 4)
     {
         time_of_frame -= 4;
     }
     else
-        time_of_frame += 0.1;
+        time_of_frame += 0.05;
     Event event;
     ratio = 1.18 * BOSS_WIDTH * int(time_of_frame);
     if ((1.18 * BOSS_WIDTH * time_of_frame) > 500)
@@ -74,10 +74,12 @@ void Boss::Fight(Player* player, Enemy* boss)
                     boss->UpdateLives(-(player->damage));
                     time.restart();
                 }
-                if (time.getElapsedTime().asSeconds() > 2)
+                if (time.getElapsedTime().asSeconds() > 2) 
                     delay = 0;
+                
                 if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > 2)
                 {
+                    boss_punch.play();
                     player->UpdateLives(-GetRandomDamage());
                     FuncOfTrow(player, boss);
                 }
@@ -134,14 +136,14 @@ void Boss::GenerateRandomPosition(Map* map[])
     } while (!CheckPosition(map));
 }
 
-void Warrior::Fight(Player* player, Enemy* enemy)
+void Warrior::Fight(Player* player, Enemy* enemy, Sound& boss_punch)
 {
     if (time_of_frame > 4)
     {
         time_of_frame -= 4;
     }
     else
-        time_of_frame += 0.05;
+        time_of_frame += 0.08;
     Event event;
     ratio = 1.5 * WARRIOR_WIDTH * int(time_of_frame);
     if ((1.5 * WARRIOR_WIDTH * time_of_frame) >= 548)
@@ -232,7 +234,7 @@ void Warrior::GenerateRandomPosition(Map* map[])
     } while (!CheckPosition(map));
 }
 
-void Tank::Fight(Player* player, Enemy* tank)
+void Tank::Fight(Player* player, Enemy* tank, Sound& boss_punch)
 {
     if (time_of_frame > 4)
     {
@@ -423,19 +425,23 @@ void Player2::UpdatePosition(RenderWindow& window, Event& event, float time, flo
         }
         if (Keyboard::isKeyPressed(Keyboard::Up) || Keyboard::isKeyPressed(Keyboard::W))
         {
+            ice_walking.play();
             prev_event = Keyboard::Up;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Down) || Keyboard::isKeyPressed(Keyboard::S))
         {
+            ice_walking.play();
             prev_event = Keyboard::Down;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Left) || Keyboard::isKeyPressed(Keyboard::A))
         {
+            ice_walking.play();
             prev_event = Keyboard::Left;
             side = 2;
         }
         else if (Keyboard::isKeyPressed(Keyboard::Right) || Keyboard::isKeyPressed(Keyboard::D))
         {
+            ice_walking.play();
             prev_event = Keyboard::Right;
             side = 1;
         }
@@ -603,7 +609,7 @@ void GenerateRandomPosition(Player* player, Map* map[])
         SIZE_OF_THORNS;
 }
 
-void IsBonusPickedUp(Player* player, Map* map[], std::vector<int> checker[])
+void IsBonusPickedUp(Player* player, Map* map[], std::vector<int> checker[], Sound& bomb_sound, Sound& hp_sound, Sound& time_sound)
 {
     Texture bomb_texture;
     bomb_texture.loadFromFile("bomb.png");
@@ -619,18 +625,21 @@ void IsBonusPickedUp(Player* player, Map* map[], std::vector<int> checker[])
             {
                 if (dynamic_cast<Player3*>(player) && checker[i][j] == 0)
                 {
+                    hp_sound.play();
                     player->UpdateLives(10);
                     map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() + j);
                     checker[i].erase(checker[i].begin() + j);
                 }
                 else if (checker[i][j] == 0)
                 {
+                    time_sound.play();
                     player->UpdateScore();
                     map[i]->objects_sprite.erase(map[i]->objects_sprite.begin() + j);
                     checker[i].erase(checker[i].begin() + j);
                 }
                 else if (checker[i][j] == 1)
                 {
+                    bomb_sound.play();
                     player->UpdateLives(-50);
                     map[i]->explode(map[i]->objects_sprite[j]);
                     checker[i][j]++;
@@ -709,7 +718,7 @@ void Transition_to_a_new_zone(Player*& Main_player, Map* map[])
         Main_player = new Player4;
     }
 }
-bool Game::Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss, int score)
+bool Game::Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss, int score, bool& flag_music)
 {
     if (boss->hp <= 0)
     {
@@ -733,10 +742,16 @@ bool Game::Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss,
 
         Font font;
         font.loadFromFile("Text.ttf");
-        Text text_score(L"Оставшееся время: " + std::to_string(score), font, 50);
+        Text text_score(L"Оставшееся время: " + std::to_string(score) + L" сек", font, 50);
         text_score.setStyle(Text::Style::Italic && Text::Style::Bold);
         text_score.setScale((float)RESOLUTION / texture_background.getSize().x, (float)RESOLUTION / texture_background.getSize().y);
         text_score.setPosition(RESOLUTION / 12, RESOLUTION / 1.7);
+
+        if (!flag_music) {
+            StopMusic_background();
+            victory_music.play();
+            flag_music = true;
+        }
 
         Event event;
         while (window.isOpen())
@@ -766,6 +781,7 @@ bool Game::Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss,
                             Main_player->score = 30;
                             Main_player->player_position = { 0,0 };
                             flag = true;
+                            victory_music.stop();
                             return false;
                         }
                     }
@@ -792,9 +808,12 @@ int main()
         flag = false;
         flag_EndGame = false;
         lever = true;
+
         srand(time(NULL));
         Game game;
         Map* map[NUMBER_OF_LOCATIONS] = { new Map1(), new Map2(), new Map3(), new Map4() }; //указатель на количество локаций
+
+        bool flag_music = false;
 
         std::vector<std::vector<int>> map_randomizer = { {0,0},{0, RESOLUTION / 2}, {RESOLUTION / 2, 0}, {RESOLUTION / 2, RESOLUTION / 2} };
 
@@ -829,7 +848,7 @@ int main()
                     collision_checker[i].push_back(1);
                 else collision_checker[i].push_back(0);
             }
-        Player* Main_player = new Player1();
+        Player* Main_player = new Player1(), *memory_player;
         Enemy* enemy = new Warrior(map);
         Enemy* boss = new Boss(map);
         Enemy* tank = new Tank(map);
@@ -846,6 +865,27 @@ int main()
         shader.setTexture(texture_shader);
         shader.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 
+        //Звуки
+        std::vector<SoundBuffer> buffer(5);
+        /*
+        0-удар самурая
+        1-удар босса
+        2-взрыв бомбы
+        3-подбор жизней
+        4-подбор времени
+        */
+        buffer[0].loadFromFile("SamuraiPunch.wav");
+        buffer[1].loadFromFile("BossPunch.wav");
+        buffer[2].loadFromFile("Bomb.wav");
+        buffer[3].loadFromFile("HP_Sound.wav");
+        buffer[4].loadFromFile("Time_Sound.wav");
+        Sound samurai_punch, boss_punch, bomb_sound, hp_sound, time_sound;
+        samurai_punch.setBuffer(buffer[0]);
+        boss_punch.setBuffer(buffer[1]);
+        bomb_sound.setBuffer(buffer[2]);
+        hp_sound.setBuffer(buffer[3]);
+        time_sound.setBuffer(buffer[4]);
+
         Clock cl, limiter, GameOver_time;
         Event event;
         Image icon;
@@ -855,9 +895,10 @@ int main()
         icon.loadFromFile("icon.png");
         window.setIcon(128, 128, icon.getPixelsPtr()); //установка иконки игры (хз, поставил из своей игры, можете поменять)
         cl.restart();
+        game.PlayMusic_background(Main_player);
         while (window.isOpen())
         {
-            lever = game.Screen_Of_Win(window, Main_player, boss, Main_player->score);
+            lever = game.Screen_Of_Win(window, Main_player, boss, Main_player->score, flag_music);
             if (!game.Is_player_dead(Main_player->hp, Main_player->score) && lever) {
                 limiter.restart();
                 while (limiter.getElapsedTime().asMicroseconds() <= 10000)
@@ -871,22 +912,26 @@ int main()
                 Main_player->UpdatePosition(window, event, time_frame, current_frame, flag_attack); //вывод новой позиции при нажатии клавиши, проверка пересечения 
 
                 if (flag_attack) {
+                    samurai_punch.play();
                     time_frame = 1;
                     do {
                         time_frame += 0.05;
                         if (Player::side == 1) Main_player->player_sprite.setTextureRect(IntRect(current_frame * (int)time_frame, 620, 130, 150));
                         else  Main_player->player_sprite.setTextureRect(IntRect(current_frame * (int)time_frame + 130, 620, -130, 150));
-                        game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, flag_attack); // отрисовка карты и игрока
+                        game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, boss_punch, flag_attack); // отрисовка карты и игрока
                     } while (time_frame <= 6);
                     flag_attack = false;
                     if (Player::side == 1)Main_player->player_sprite.setTextureRect(IntRect(185, 45, 80, 100));
                     else Main_player->player_sprite.setTextureRect(IntRect(265, 45, -80, 100));
                 }
-                //границ 4-х зон и границ карты (вызывает update lives когда мёртв).
+                //границ 4-х зон и границ карты (вызывает update lives когда мёртв)
                 Transition_to_a_new_zone(Main_player, map);
-                //Main_player->UpdateScore();
-                IsBonusPickedUp(Main_player, map, collision_checker);
-                game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, flag_attack); // отрисовка карты и игрока
+
+                //Изменение музыки на локации
+                    game.PlayMusic_background(Main_player);
+
+                IsBonusPickedUp(Main_player, map, collision_checker, bomb_sound, hp_sound, time_sound);
+                game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, boss_punch, flag_attack); // отрисовка карты и игрока
                 if (cl.getElapsedTime().asSeconds() >= 1) {
                     Main_player->score--;//обновляет таймер в секундах.
                     std::cout << Main_player->score << "\n";
@@ -900,6 +945,11 @@ int main()
                 }
                 if (!flag)
                 {
+                    if (!flag_music) {
+                        game.StopMusic_background();
+                        game.PlayMusic_end();
+                        flag_music = true;
+                    }
                     //Экран пройгрыша
                     Texture Game_over_texture;
                     Game_over_texture.loadFromFile("Game_over.png");
@@ -996,6 +1046,7 @@ int main()
                                     Main_player->score = 30;
                                     Main_player->player_position = { 0,0 };
                                     flag = true;
+                                    game.StopMusic_end();
                                     break;
                                 }
                             }
