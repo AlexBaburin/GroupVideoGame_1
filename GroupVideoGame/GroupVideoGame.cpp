@@ -9,7 +9,7 @@ int SPEED = RESOLUTION / 320;
 int PLAYER_HIGHT = RESOLUTION / 12;
 int PLAYER_WIDTH = int(RESOLUTION * 85.0 / 1200);
 #define THROW 75
-int SIZE_OF_THORNS = 50;
+int SIZE_OF_THORNS = 50 * RESOLUTION / 1200.0;
 int Player::hp = 100;
 int Player::side = 1;//1=смотрит вправо; 2=смотрит влево;
 Coordinates Player::player_position = { 0, 0 };
@@ -130,8 +130,8 @@ void Boss::GenerateRandomPosition(Map* map[])
 {
     do
     {
-        player_position.x = rand() % (RESOLUTION / 8 - (BOSS_WIDTH + 10)) + map[3]->position.x + BOSS_WIDTH + RESOLUTION / 4;
-        player_position.y = rand() % (RESOLUTION / 2 - BOSS_HIGHT) + map[3]->position.y;
+        player_position.x = rand() % (RESOLUTION / 8 - int((BOSS_WIDTH + 10) * (RESOLUTION / 1200.0) + SIZE_OF_THORNS)) + map[3]->position.x + int(BOSS_WIDTH * (RESOLUTION / 1200.0)) + RESOLUTION / 4;
+        player_position.y = rand() % (RESOLUTION / 2 - int(BOSS_HIGHT * (RESOLUTION / 1200.0) + SIZE_OF_THORNS)) + map[3]->position.y;
         //std::cout << CheckPosition(map) << "   " << player_position.x << "   " << player_position.y << std::endl;
     } while (!CheckPosition(map));
 }
@@ -229,8 +229,8 @@ void Warrior::GenerateRandomPosition(Map* map[])
 {
     do
     {
-        player_position.x = rand() % (RESOLUTION / 8 - (WARRIOR_WIDTH + 10)) + map[3]->position.x + WARRIOR_WIDTH + RESOLUTION / 8;
-        player_position.y = rand() % (RESOLUTION / 2 - WARRIOR_HIGHT) + map[3]->position.y;
+        player_position.x = rand() % (RESOLUTION / 8 - int((WARRIOR_WIDTH + 10) * (RESOLUTION / 1200.0) + SIZE_OF_THORNS)) + map[3]->position.x + int(WARRIOR_WIDTH * (RESOLUTION / 1200.0)) + RESOLUTION / 8;
+        player_position.y = rand() % (RESOLUTION / 2 - int(WARRIOR_HIGHT * (RESOLUTION / 1200.0) + SIZE_OF_THORNS)) + map[3]->position.y;
     } while (!CheckPosition(map));
 }
 
@@ -333,8 +333,8 @@ void Tank::GenerateRandomPosition(Map* map[])
 {
     do
     {
-        player_position.x = rand() % (RESOLUTION / 8 - (TANK_WIDTH + 20)) + map[3]->position.x + TANK_WIDTH;
-        player_position.y = rand() % (RESOLUTION / 2 - TANK_HIGHT) + map[3]->position.y;
+        player_position.x = rand() % (RESOLUTION / 8 - int((TANK_WIDTH + 20) * (RESOLUTION / 1200.0) + SIZE_OF_THORNS)) + map[3]->position.x + int(TANK_WIDTH * (RESOLUTION / 1200.0));
+        player_position.y = rand() % (RESOLUTION / 2 - int(TANK_HIGHT * (RESOLUTION / 1200.0) + SIZE_OF_THORNS)) + map[3]->position.y;
     } while (!CheckPosition(map));
 }
 
@@ -362,10 +362,10 @@ void Player::UpdateScore()
 }
 bool Player::IsPlayerOutOfBounds()
 {
-    if (player_position.x > SIZE_OF_THORNS - 20 && 
-        player_position.x + PLAYER_WIDTH < RESOLUTION - SIZE_OF_THORNS + 20 &&
-        player_position.y > SIZE_OF_THORNS - 20 &&
-        player_position.y + PLAYER_HIGHT < RESOLUTION - SIZE_OF_THORNS + 20)
+    if (player_position.x > SIZE_OF_THORNS - 60 * (RESOLUTION / 1200.0) &&
+        player_position.x + PLAYER_WIDTH < RESOLUTION - SIZE_OF_THORNS + 20 * (RESOLUTION / 1200.0) &&
+        player_position.y > SIZE_OF_THORNS - 20 * (RESOLUTION / 1200.0) &&
+        player_position.y + PLAYER_HIGHT < RESOLUTION - SIZE_OF_THORNS + 20 * (RESOLUTION / 1200.0))
         return false;
     return true;
 }
@@ -745,7 +745,7 @@ bool Game::Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss,
         Text text_score(L"Оставшееся время: " + std::to_string(score) + L" сек", font, 50);
         text_score.setStyle(Text::Style::Italic && Text::Style::Bold);
         text_score.setScale((float)RESOLUTION / texture_background.getSize().x, (float)RESOLUTION / texture_background.getSize().y);
-        text_score.setPosition(RESOLUTION / 12, RESOLUTION / 1.7);
+        text_score.setPosition(RESOLUTION / 6, RESOLUTION / 1.7);
 
         if (!flag_music) {
             StopMusic_background();
@@ -888,6 +888,10 @@ int main()
 
         Clock cl, limiter, GameOver_time;
         Event event;
+        Font score_font;
+        score_font.loadFromFile("Text.ttf");
+        Text scoreText("Time: " + std::to_string(Main_player->score), score_font, RESOLUTION / 30);
+        scoreText.setPosition(RESOLUTION / 2 - SIZE_OF_THORNS * 2, SIZE_OF_THORNS);
         Image icon;
         float time_frame = 1, current_frame = 185;
         bool flag_attack = false;
@@ -918,7 +922,7 @@ int main()
                         time_frame += 0.05;
                         if (Player::side == 1) Main_player->player_sprite.setTextureRect(IntRect(current_frame * (int)time_frame, 620, 130, 150));
                         else  Main_player->player_sprite.setTextureRect(IntRect(current_frame * (int)time_frame + 130, 620, -130, 150));
-                        game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, boss_punch, flag_attack); // отрисовка карты и игрока
+                        game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, boss_punch, flag_attack, scoreText); // отрисовка карты и игрока
                     } while (time_frame <= 6);
                     flag_attack = false;
                     if (Player::side == 1)Main_player->player_sprite.setTextureRect(IntRect(185, 45, 80, 100));
@@ -926,12 +930,9 @@ int main()
                 }
                 //границ 4-х зон и границ карты (вызывает update lives когда мёртв)
                 Transition_to_a_new_zone(Main_player, map);
-
-                //Изменение музыки на локации
-                    game.PlayMusic_background(Main_player);
-
-                IsBonusPickedUp(Main_player, map, collision_checker, bomb_sound, hp_sound, time_sound);
-                game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, boss_punch, flag_attack); // отрисовка карты и игрока
+                //Main_player->UpdateScore();
+                IsBonusPickedUp(Main_player, map, collision_checker);
+                game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, flag_attack); // отрисовка карты и игрока
                 if (cl.getElapsedTime().asSeconds() >= 1) {
                     Main_player->score--;//обновляет таймер в секундах.
                     std::cout << Main_player->score << "\n";

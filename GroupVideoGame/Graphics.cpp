@@ -8,7 +8,7 @@ void draw_enemy(Enemy* enemy, RenderWindow& window, int delta_health)
 	if (enemy->hp > 0)
 	{
 		enemy->UpdateLives(delta_health);
-		enemy->lives.setPosition(enemy->player_position.x - WARRIOR_WIDTH / 2 + 15, enemy->player_position.y - WARRIOR_HIGHT / 2 - 10);
+		enemy->lives.setPosition(enemy->player_position.x - (WARRIOR_WIDTH / 2 - 15) * (RESOLUTION / 1200.0), enemy->player_position.y - (WARRIOR_HIGHT / 2 + 10) * (RESOLUTION / 1200.0));
 		enemy->lives.setString("HP:" + std::to_string(enemy->hp));
 		window.draw(enemy->lives);
 	}
@@ -19,7 +19,7 @@ void draw_boss(Enemy* enemy, RenderWindow& window, int delta_health)
 	if (enemy->hp > 0)
 	{
 		enemy->UpdateLives(delta_health);
-		enemy->lives.setPosition(enemy->player_position.x - WARRIOR_WIDTH / 2 + 15, enemy->player_position.y - WARRIOR_HIGHT / 2 - 10);
+		enemy->lives.setPosition(enemy->player_position.x - (WARRIOR_WIDTH / 2 - 15) * (RESOLUTION / 1200.0), enemy->player_position.y - (WARRIOR_HIGHT / 2 + 10) * (RESOLUTION / 1200.0));
 		enemy->lives.setString("HP:" + std::to_string(enemy->hp));
 		window.draw(enemy->lives);
 		window.draw(enemy->text_boss);
@@ -48,13 +48,13 @@ void draw_player(Player* player, RenderWindow& window, bool flag_attack)
 void draw_lives(Player* player, int delta_health, RenderWindow& window)
 {
 	player->UpdateLives(delta_health);
-	player->lives.setPosition(player->player_position.x + PLAYER_WIDTH / 2, player->player_position.y - 10);
+	player->lives.setPosition(player->player_position.x + PLAYER_WIDTH / 2, player->player_position.y - 10 * (RESOLUTION / 1200.0));
 	player->lives.setString("HP:" + std::to_string(player->hp));
 	window.draw(player->lives);
 }
-void draw_score(Player* player, RenderWindow& window)
+void draw_score(RenderWindow& window, Text scoreText)
 {
-	player->UpdateScore();
+	window.draw(scoreText);
 }
 void draw_full_map(RenderWindow& window, Map* map[])
 {
@@ -92,7 +92,7 @@ void draw_border(RenderWindow& window, Sprite& border)
 		}
 	}
 }
-void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, Sound& boss_punch, bool flag_attack)
+void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, Sound& boss_punch, bool flag_attack, Text scoreText)
 {
 	window.clear();
 	int delta_health = 0;
@@ -118,7 +118,7 @@ void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& bo
 	draw_bonuses(window, map);
 	if (!dynamic_cast<Player3*>(player))
 		draw_lives(player, delta_health, window);
-	//draw_score(player, window);
+	draw_score(window, scoreText);
 	if (dynamic_cast<Player1*>(player)) {
 		RectangleShape Fon_map1;
 		Fon_map1.setSize(Vector2f(RESOLUTION, RESOLUTION));

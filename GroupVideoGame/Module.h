@@ -52,7 +52,7 @@ public:
 		lives.setFillColor(Color::Red);
 		lives.setString("HP:" + std::to_string(hp));
 		lives.setFont(font);
-		lives.setCharacterSize(10);
+		lives.setCharacterSize(10 * (RESOLUTION / 1200.0));
 		lives.setPosition(player_position.x + PLAYER_WIDTH / 6, player_position.y - 10);
 	}
 
@@ -315,7 +315,7 @@ public:
 		lives.setFillColor(Color::Red);
 		lives.setString("HP:" + std::to_string(hp));
 		lives.setFont(font);
-		lives.setCharacterSize(10);
+		lives.setCharacterSize(10 * (RESOLUTION / 1200.0));
 		lives.setPosition(player_position.x - 10, player_position.y - 50);
 		damage = WARRIOR_AVERAGE_DAMAGE;
 		field_of_sight = FIELD_OF_SIGHT * RESOLUTION / 1200.0;
@@ -348,7 +348,7 @@ public:
 		lives.setFillColor(Color::Red);
 		lives.setString("HP:" + std::to_string(hp));
 		lives.setFont(font);
-		lives.setCharacterSize(10);
+		lives.setCharacterSize(10 * (RESOLUTION / 1200.0));
 		lives.setPosition(player_position.x - 10, player_position.y - 50);
 		damage = BOSS_AVERAGE_DAMAGE;
 		field_of_sight = FIELD_OF_SIGHT * RESOLUTION / 1200.0;
@@ -381,13 +381,13 @@ public:
 		lives.setFillColor(Color::Red);
 		lives.setString("HP:" + std::to_string(hp));
 		lives.setFont(font);
-		lives.setCharacterSize(10);
+		lives.setCharacterSize(10 * (RESOLUTION / 1200.0));
 		lives.setPosition(player_position.x - 10, player_position.y - 50);
 		text_boss.setFillColor(Color::Red);
 		text_boss.setString("BOSS");
 		text_boss.setFont(font);
-		text_boss.setCharacterSize(25);
-		text_boss.setPosition(player_position.x - 50, player_position.y - 100);
+		text_boss.setCharacterSize(25 * (RESOLUTION / 1200.0));
+		text_boss.setPosition(player_position.x - 50 * (RESOLUTION / 1200.0), player_position.y - 100 * (RESOLUTION / 1200.0));
 		damage = BOSS_AVERAGE_DAMAGE;
 		field_of_sight = FIELD_OF_SIGHT * RESOLUTION / 1200.0;
 		time_of_frame = 4.01;
@@ -470,7 +470,7 @@ public:
 		victory_music.openFromFile("Victory.wav");
 		victory_music.setLoop(true);
 	}
-	void Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, Sound& boss_punch, bool flag_attack);
+	void Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, Sound& boss_punch, bool flag_attack, Text scoreText);
 	bool Is_player_dead(int hp, int score);
 	bool Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss, int score, bool& flag_music);
 };
