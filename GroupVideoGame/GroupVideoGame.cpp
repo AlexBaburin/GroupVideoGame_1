@@ -4,8 +4,8 @@
 #include "Graphics.h"
 using namespace sf;
 
-#define SPEED 5
 int RESOLUTION = 1200;
+int SPEED = RESOLUTION / 320;
 int PLAYER_HIGHT = RESOLUTION / 12;
 int PLAYER_WIDTH = int(RESOLUTION * 85.0 / 1200);
 #define THROW 75
@@ -13,7 +13,7 @@ int SIZE_OF_THORNS = 50;
 int Player::hp = 100;
 int Player::side = 1;//1=смотрит вправо; 2=смотрит влево;
 Coordinates Player::player_position = { 0, 0 };
-int Player::score = 100;
+int Player::score = 30;
 int Player::damage = 500;
 Keyboard::Key prev_event = Keyboard::Key::T;
 Keyboard::Key attack_delay = Keyboard::Key::T;

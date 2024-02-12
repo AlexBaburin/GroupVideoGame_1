@@ -205,7 +205,7 @@ public:
 	{
 		explosion_texture.loadFromFile("explosion.png");
 		map_texture.loadFromFile("Room3_floor.png");
-		objects_texture.loadFromFile("coin.png");
+		objects_texture.loadFromFile("Heart.png");
 		collisions_texture.loadFromFile("bomb.png");
 		map_sprite.setTexture(map_texture);
 		map_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
