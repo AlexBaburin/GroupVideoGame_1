@@ -14,7 +14,7 @@ int Player::hp = 100;
 int Player::side = 1;//1=смотрит вправо; 2=смотрит влево;
 Coordinates Player::player_position = { 0, 0 };
 int Player::score = 30;
-int Player::damage = 500;
+int Player::damage = 100;
 Keyboard::Key prev_event = Keyboard::Key::T;
 Keyboard::Key attack_delay = Keyboard::Key::T;
 
@@ -904,6 +904,7 @@ int main()
         {
             lever = game.Screen_Of_Win(window, Main_player, boss, Main_player->score, flag_music);
             if (!game.Is_player_dead(Main_player->hp, Main_player->score) && lever) {
+                scoreText.setString("Time: " + std::to_string(Main_player->score));
                 limiter.restart();
                 while (limiter.getElapsedTime().asMicroseconds() <= 10000)
                 {
