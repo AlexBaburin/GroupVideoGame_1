@@ -1,5 +1,5 @@
 #include "Module.h"
-//#include "Graphics.h"
+#include "Graphics.h"
 using namespace sf;
 
 void draw_enemy(Enemy* enemy, RenderWindow& window, int delta_health)

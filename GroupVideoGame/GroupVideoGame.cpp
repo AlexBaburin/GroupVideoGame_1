@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #include <vector>
 #include "Module.h"
-//#include "Graphics.h"
+#include "Graphics.h"
 using namespace sf;
 
 int RESOLUTION = 1200;
