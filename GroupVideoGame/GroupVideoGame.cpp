@@ -362,7 +362,7 @@ void Player::UpdateScore()
 }
 bool Player::IsPlayerOutOfBounds()
 {
-    if (player_position.x > SIZE_OF_THORNS - 60 * (RESOLUTION / 1200.0) &&
+    if (player_position.x > SIZE_OF_THORNS - 20 * (RESOLUTION / 1200.0) &&
         player_position.x + PLAYER_WIDTH < RESOLUTION - SIZE_OF_THORNS + 20 * (RESOLUTION / 1200.0) &&
         player_position.y > SIZE_OF_THORNS - 20 * (RESOLUTION / 1200.0) &&
         player_position.y + PLAYER_HIGHT < RESOLUTION - SIZE_OF_THORNS + 20 * (RESOLUTION / 1200.0))

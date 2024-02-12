@@ -36,11 +36,13 @@ void draw_bonuses(RenderWindow& window, Map* map[])
 void draw_player(Player* player, RenderWindow& window, bool flag_attack)
 {
 	if (flag_attack) {
-		player->player_sprite.setPosition(player->player_position.x, player->player_position.y - RESOLUTION / 25);
+		if (Player::side == 1)
+			player->player_sprite.setPosition(player->player_position.x, player->player_position.y - RESOLUTION / 25);
+		else
+			player->player_sprite.setPosition(player->player_position.x - RESOLUTION / 25, player->player_position.y - RESOLUTION / 25);
 	}
 	else {
-		if (Player::side == 1) player->player_sprite.setPosition(player->player_position.x, player->player_position.y);
-		else player->player_sprite.setPosition(player->player_position.x + RESOLUTION / 25, player->player_position.y);
+		player->player_sprite.setPosition(player->player_position.x, player->player_position.y);
 	}
 	player->player_sprite.setScale(RESOLUTION / 1200.0, RESOLUTION / 1200.0);
 	window.draw(player->player_sprite);
