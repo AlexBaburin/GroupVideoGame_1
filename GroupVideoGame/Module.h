@@ -12,16 +12,16 @@ using namespace sf;
 #define WARRIOR_HP 150
 #define WARRIOR_WIDTH 100
 #define WARRIOR_HIGHT 125
-#define WARRIOR_AVERAGE_DAMAGE 15
+#define WARRIOR_AVERAGE_DAMAGE 20
 
 #define BOSS_WIDTH 110
 #define BOSS_HIGHT 110
-#define BOSS_AVERAGE_DAMAGE 25
+#define BOSS_AVERAGE_DAMAGE 30
 
 #define TANK_HP 350
 #define TANK_WIDTH 90
 #define TANK_HIGHT 100
-#define TANK_AVERAGE_DAMAGE 7
+#define TANK_AVERAGE_DAMAGE 10
 
 extern int RESOLUTION;
 extern int PLAYER_HIGHT;
@@ -376,7 +376,7 @@ public:
 		GenerateRandomPosition(map);
 		enemy_sprite.setPosition(Vector2f(player_position.x, player_position.y));
 		enemy_sprite.setOrigin(Vector2f(BOSS_WIDTH / 2, BOSS_HIGHT / 2));
-		hp = RESOLUTION/3;
+		hp = 1000;
 		font.loadFromFile("Text.ttf");
 		lives.setFillColor(Color::Red);
 		lives.setString("HP:" + std::to_string(hp));
@@ -458,6 +458,11 @@ public:
 		background2.openFromFile("Map2.wav");
 		background3.openFromFile("Map3.wav");
 		background4.openFromFile("Map4.wav");
+
+		background1.setVolume(30);
+		background2.setVolume(30);
+		background3.setVolume(30);
+		background4.setVolume(20);
 
 		background1.setLoop(true);
 		background2.setLoop(true);

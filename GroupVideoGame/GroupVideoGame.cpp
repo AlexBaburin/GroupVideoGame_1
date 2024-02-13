@@ -15,7 +15,7 @@ int Player::hp = 100;
 int Player::side = 1;//1=смотрит вправо; 2=смотрит влево;
 Coordinates Player::player_position = { 0, 0 };
 int Player::score = 30;
-int Player::damage = 20;
+int Player::damage = 15;
 Keyboard::Key prev_event = Keyboard::Key::T;
 Keyboard::Key attack_delay = Keyboard::Key::T;
 
@@ -175,9 +175,10 @@ void Warrior::Fight(Player* player, Enemy* enemy, Sound& boss_punch)
             interval_between_attacks.restart();
         }
     }
-    else
+    else {
         if (time_of_frame >= 4)
             time_of_frame = 4;
+    }
     if (prev_index != index)
         enemy->enemy_texture.loadFromFile(NamesImagesWarrior[index]);
     enemy_sprite.setTextureRect(IntRect(ratio, 0, WARRIOR_WIDTH, WARRIOR_HIGHT));
@@ -223,7 +224,7 @@ void Tank::Fight(Player* player, Enemy* tank, Sound& boss_punch)
         time_of_frame -= 4;
     }
     else
-        time_of_frame += 0.05;
+        time_of_frame += 0.08;
     Event event;
     ratio = 1.89 * TANK_WIDTH * int(time_of_frame);
     if ((1.89 * TANK_HIGHT * time_of_frame) >= 600)
@@ -882,7 +883,7 @@ int main()
         tipText.setPosition(RESOLUTION / 2 - SIZE_OF_THORNS * 4, SIZE_OF_THORNS / 5);
         Image icon;
         float time_frame = 1, current_frame = 185;
-        bool flag_attack = false;
+        bool flag_attack = false, flag_enemy = false, flag_tank = false;
         RenderWindow window(VideoMode(RESOLUTION, RESOLUTION), "Video game");
         icon.loadFromFile("icon.png");
         window.setIcon(128, 128, icon.getPixelsPtr()); //установка иконки игры (хз, поставил из своей игры, можете поменять)
@@ -903,6 +904,13 @@ int main()
                 }
                 else time_frame += 0.3;
                 Main_player->UpdatePosition(window, event, time_frame, current_frame, flag_attack); //вывод новой позиции при нажатии клавиши, проверка пересечения 
+
+                if (enemy->hp <= 0 && !flag_enemy) {
+                    boss->hp -= 250; flag_enemy = true;
+                }
+                if (tank->hp <= 0 && !flag_tank) {
+                    boss->hp -= 250; flag_tank = true;
+                }
 
                 if (flag_attack) {
                     samurai_punch.play();
