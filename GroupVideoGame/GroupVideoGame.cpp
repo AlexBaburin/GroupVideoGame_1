@@ -15,7 +15,7 @@ int Player::hp = 100;
 int Player::side = 1;//1=смотрит вправо; 2=смотрит влево;
 Coordinates Player::player_position = { 0, 0 };
 int Player::score = 30;
-int Player::damage = 100;
+int Player::damage = 20;
 Keyboard::Key prev_event = Keyboard::Key::T;
 Keyboard::Key attack_delay = Keyboard::Key::T;
 
@@ -41,7 +41,7 @@ void Boss::Fight(Player* player, Enemy* boss, Sound& boss_punch)
         time_of_frame -= 4;
     }
     else
-        time_of_frame += 0.05;
+        time_of_frame += 0.08;
     Event event;
     ratio = 1.18 * BOSS_WIDTH * int(time_of_frame);
     if ((1.18 * BOSS_WIDTH * time_of_frame) > 500)
@@ -52,23 +52,10 @@ void Boss::Fight(Player* player, Enemy* boss, Sound& boss_punch)
         int distance_y = abs(player->player_position.y + PLAYER_HIGHT / 2 - player_position.y);
         if (sqrt(distance_x * distance_x + distance_y * distance_y) <= field_of_sight)
         {
-            if (flag)
-            {
-                index = 0;
-                if (time_of_frame > 4)
-                {
-                    flag = false;
-                    interval_between_attacks.restart();
-                }
-            }
-            else
-            {
-                index = 1;
-            }
             if ((sqrt(distance_x * distance_x + distance_y * distance_y) <= (field_of_sight * 0.7)) && (time_of_frame > 3.96))
             {
                 std::cout << "You got a damage!\n";
-                if ((attack_delay == Keyboard::E) && (time.getElapsedTime().asMilliseconds() > delay))
+                if ((attack_delay == Keyboard::E))
                 {
                     std::cout << "E\n";
                     flag = true;
@@ -78,16 +65,19 @@ void Boss::Fight(Player* player, Enemy* boss, Sound& boss_punch)
                 }
                 if (time.getElapsedTime().asSeconds() > 2) 
                     delay = 0;
-                if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > delay && interval_between_attacks.getElapsedTime().asSeconds() < 2)
+                if (interval_between_attacks.getElapsedTime().asSeconds() >3)
                 {
+                    index = 1;
                     boss_punch.play();
                     player->UpdateLives(-GetRandomDamage());
                     FuncOfTrow(player, boss);
+                    interval_between_attacks.restart();
                 }
             }
         }
         else
         {
+            interval_between_attacks.restart();
             index = 2;
         }
     }
@@ -155,44 +145,34 @@ void Warrior::Fight(Player* player, Enemy* enemy, Sound& boss_punch)
         int distance_y = abs(player->player_position.y + PLAYER_HIGHT / 2 - player_position.y);
         if (sqrt(distance_x * distance_x + distance_y * distance_y) <= field_of_sight)
         {
-            if (flag)
-            {
-                index = 0;
-                if (time_of_frame > 4)
-                {
-                    flag = false;
-                    interval_between_attacks.restart();
-                }
-            }
-            else
-            {
-                index = 1;
-            }
             if ((sqrt(distance_x * distance_x + distance_y * distance_y) <= (field_of_sight * 0.7)) && (time_of_frame > 3.96))
             {
                 if (attack_delay == Keyboard::E)
                 {
                     std::cout << "E\n";
-                    if ((time.getElapsedTime().asMilliseconds() > delay))
-                    {
+                    /*if ((time.getElapsedTime().asMilliseconds() > delay))
+                    {*/
                         flag = true;
                         delay = 10000;
                         enemy->UpdateLives(-(player->damage));
                         time.restart();
-                    }
+                    //}
                 }
                 if (time.getElapsedTime().asSeconds() > 2)
                     delay = 0;
-                if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > delay && interval_between_attacks.getElapsedTime().asSeconds() < 2)
+                if (/*!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > delay && */interval_between_attacks.getElapsedTime().asSeconds() > 2)
                 {
+                    index = 1;
                     std::cout << "You got a damage!\n";
                     player->UpdateLives(-GetRandomDamage());
+                    interval_between_attacks.restart();
                 }
             }
         }
         else
         {
             index = 2;
+            interval_between_attacks.restart();
         }
     }
     else
@@ -254,7 +234,7 @@ void Tank::Fight(Player* player, Enemy* tank, Sound& boss_punch)
         int distance_y = abs(player->player_position.y + PLAYER_HIGHT / 2 - player_position.y);
         if (sqrt(distance_x * distance_x + distance_y * distance_y) <= field_of_sight)
         {
-            if (flag)
+            /*if (flag)
             {
                 index = 0;
                 if (time_of_frame > 4)
@@ -266,31 +246,34 @@ void Tank::Fight(Player* player, Enemy* tank, Sound& boss_punch)
             else
             {
                 index = 1;
-            }
+            }*/
             if ((sqrt(distance_x * distance_x + distance_y * distance_y) <= (field_of_sight * 0.7)) && (time_of_frame > 3.96))
             {
                 if (attack_delay == Keyboard::E)
                 {
                     std::cout << "E\n";
-                    if ((time.getElapsedTime().asMilliseconds() > delay))
-                    {
+                    /*if ((time.getElapsedTime().asMilliseconds() > delay))
+                    {*/
                         flag = true;
                         delay = 10000;
                         tank->UpdateLives(-(player->damage));
                         time.restart();
-                    }
+                   // }
                 }
                 if (time.getElapsedTime().asSeconds() > 2)
                     delay = 0;
-                if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > delay && interval_between_attacks.getElapsedTime().asSeconds() < 2)
+                if (/*!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > delay &&*/ interval_between_attacks.getElapsedTime().asSeconds() > 2)
                 {
+                    index = 1;
                     std::cout << "You got a damage!\n";
                     player->UpdateLives(-GetRandomDamage());
+                    interval_between_attacks.restart();
                 }
             }
         }
         else
         {
+            interval_between_attacks.restart();
             index = 2;
         }
     }
