@@ -272,7 +272,7 @@ public:
 	Texture enemy_texture;
 	Font font;
 	Text lives, text_boss;
-	Clock time;
+	Clock time, interval_between_attacks;
 	int hp;
 	int damage;
 	int field_of_sight;

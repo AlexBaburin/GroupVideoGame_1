@@ -57,6 +57,7 @@ void Boss::Fight(Player* player, Enemy* boss, Sound& boss_punch)
                 if (time_of_frame > 4)
                 {
                     flag = false;
+                    interval_between_attacks.restart();
                 }
             }
             else
@@ -76,8 +77,7 @@ void Boss::Fight(Player* player, Enemy* boss, Sound& boss_punch)
                 }
                 if (time.getElapsedTime().asSeconds() > 2) 
                     delay = 0;
-                
-                if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > 2)
+                if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > delay && interval_between_attacks.getElapsedTime().asSeconds() < 2)
                 {
                     boss_punch.play();
                     player->UpdateLives(-GetRandomDamage());
@@ -160,6 +160,7 @@ void Warrior::Fight(Player* player, Enemy* enemy, Sound& boss_punch)
                 if (time_of_frame > 4)
                 {
                     flag = false;
+                    interval_between_attacks.restart();
                 }
             }
             else
@@ -181,7 +182,7 @@ void Warrior::Fight(Player* player, Enemy* enemy, Sound& boss_punch)
                 }
                 if (time.getElapsedTime().asSeconds() > 2)
                     delay = 0;
-                if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > 2)
+                if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > delay && interval_between_attacks.getElapsedTime().asSeconds() < 2)
                 {
                     std::cout << "You got a damage!\n";
                     player->UpdateLives(-GetRandomDamage());
@@ -258,6 +259,7 @@ void Tank::Fight(Player* player, Enemy* tank, Sound& boss_punch)
                 if (time_of_frame > 4)
                 {
                     flag = false;
+                    interval_between_attacks.restart();
                 }
             }
             else
@@ -279,7 +281,7 @@ void Tank::Fight(Player* player, Enemy* tank, Sound& boss_punch)
                 }
                 if (time.getElapsedTime().asSeconds() > 2)
                     delay = 0;
-                if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > 2)
+                if (!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > delay && interval_between_attacks.getElapsedTime().asSeconds() < 2)
                 {
                     std::cout << "You got a damage!\n";
                     player->UpdateLives(-GetRandomDamage());
