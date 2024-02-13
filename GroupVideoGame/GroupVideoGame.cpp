@@ -4,6 +4,7 @@
 #include "Graphics.h"
 using namespace sf;
 
+//E - attack, WASD - move
 int RESOLUTION = 1200;
 int SPEED = RESOLUTION / 320;
 int PLAYER_HIGHT = RESOLUTION / 12;
@@ -131,7 +132,7 @@ void Boss::GenerateRandomPosition(Map* map[])
     do
     {
         player_position.x = rand() % (RESOLUTION / 8 - int((BOSS_WIDTH + 10) * (RESOLUTION / 1200.0) + SIZE_OF_THORNS)) + map[3]->position.x + int(BOSS_WIDTH * (RESOLUTION / 1200.0)) + RESOLUTION / 4;
-        player_position.y = rand() % (RESOLUTION / 2 - int(BOSS_HIGHT * (RESOLUTION / 1200.0) + SIZE_OF_THORNS)) + map[3]->position.y;
+        player_position.y = rand() % (RESOLUTION / 2 - int(BOSS_HIGHT * (RESOLUTION / 1200.0) + SIZE_OF_THORNS * 2)) + map[3]->position.y + int(BOSS_HIGHT * (RESOLUTION / 1200.0) + SIZE_OF_THORNS);
         //std::cout << CheckPosition(map) << "   " << player_position.x << "   " << player_position.y << std::endl;
     } while (!CheckPosition(map));
 }
@@ -231,7 +232,7 @@ void Warrior::GenerateRandomPosition(Map* map[])
     do
     {
         player_position.x = rand() % (RESOLUTION / 8 - int((WARRIOR_WIDTH + 10) * (RESOLUTION / 1200.0) + SIZE_OF_THORNS)) + map[3]->position.x + int(WARRIOR_WIDTH * (RESOLUTION / 1200.0)) + RESOLUTION / 8;
-        player_position.y = rand() % (RESOLUTION / 2 - int(WARRIOR_HIGHT * (RESOLUTION / 1200.0) + SIZE_OF_THORNS)) + map[3]->position.y;
+        player_position.y = rand() % (RESOLUTION / 2 - int(WARRIOR_HIGHT * (RESOLUTION / 1200.0) + SIZE_OF_THORNS * 2)) + map[3]->position.y + int(BOSS_HIGHT * (RESOLUTION / 1200.0) + SIZE_OF_THORNS);
     } while (!CheckPosition(map));
 }
 
@@ -336,7 +337,7 @@ void Tank::GenerateRandomPosition(Map* map[])
     do
     {
         player_position.x = rand() % (RESOLUTION / 8 - int((TANK_WIDTH + 20) * (RESOLUTION / 1200.0) + SIZE_OF_THORNS)) + map[3]->position.x + int(TANK_WIDTH * (RESOLUTION / 1200.0));
-        player_position.y = rand() % (RESOLUTION / 2 - int(TANK_HIGHT * (RESOLUTION / 1200.0) + SIZE_OF_THORNS)) + map[3]->position.y;
+        player_position.y = rand() % (RESOLUTION / 2 - int(TANK_HIGHT * (RESOLUTION / 1200.0) + SIZE_OF_THORNS * 2)) + map[3]->position.y + int(BOSS_HIGHT * (RESOLUTION / 1200.0) + SIZE_OF_THORNS);
     } while (!CheckPosition(map));
 }
 
@@ -894,6 +895,8 @@ int main()
         score_font.loadFromFile("Text.ttf");
         Text scoreText("Time: " + std::to_string(Main_player->score), score_font, RESOLUTION / 30);
         scoreText.setPosition(RESOLUTION / 2 - SIZE_OF_THORNS * 2, SIZE_OF_THORNS);
+        Text tipText("WASD - move, E - attack", score_font, RESOLUTION / 40);
+        tipText.setPosition(RESOLUTION / 2 - SIZE_OF_THORNS * 4, SIZE_OF_THORNS / 5);
         Image icon;
         float time_frame = 1, current_frame = 185;
         bool flag_attack = false;
@@ -925,7 +928,7 @@ int main()
                         time_frame += 0.05;
                         if (Player::side == 1) Main_player->player_sprite.setTextureRect(IntRect(current_frame * (int)time_frame, 620, 130, 150));
                         else  Main_player->player_sprite.setTextureRect(IntRect(current_frame * (int)time_frame + 130, 620, -130, 150));
-                        game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, boss_punch, flag_attack, scoreText); // отрисовка карты и игрока
+                        game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, boss_punch, flag_attack, scoreText, tipText); // отрисовка карты и игрока
                     } while (time_frame <= 6);
                     flag_attack = false;
                     if (Player::side == 1)Main_player->player_sprite.setTextureRect(IntRect(185, 45, 80, 100));
@@ -936,7 +939,7 @@ int main()
                 game.PlayMusic_background(Main_player);
                 //Main_player->UpdateScore();
                 IsBonusPickedUp(Main_player, map, collision_checker, bomb_sound, hp_sound, time_sound);
-                game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, boss_punch, flag_attack, scoreText); // отрисовка карты и игрока
+                game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, boss_punch, flag_attack, scoreText, tipText); // отрисовка карты и игрока
                 if (cl.getElapsedTime().asSeconds() >= 1) {
                     Main_player->score--;//обновляет таймер в секундах.
                     std::cout << Main_player->score << "\n";

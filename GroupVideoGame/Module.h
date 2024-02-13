@@ -470,7 +470,7 @@ public:
 		victory_music.openFromFile("Victory.wav");
 		victory_music.setLoop(true);
 	}
-	void Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, Sound& boss_punch, bool flag_attack, Text scoreText);
+	void Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, Sound& boss_punch, bool flag_attack, Text scoreText, Text tipText);
 	bool Is_player_dead(int hp, int score);
 	bool Screen_Of_Win(RenderWindow& window, Player* Main_player, Enemy* boss, int score, bool& flag_music);
 };

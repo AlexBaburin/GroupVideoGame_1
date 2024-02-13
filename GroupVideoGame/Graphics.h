@@ -9,3 +9,4 @@ void draw_full_map(RenderWindow& window, Map* map[]);
 void draw_bonuses(RenderWindow& window, Map* map[]);
 void draw_border(RenderWindow& window, Sprite& border);
 void draw_enemy(Enemy* enemy, RenderWindow& window, int delta_health);
+void draw_tips(RenderWindow& window, Text text);

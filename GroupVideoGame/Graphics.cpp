@@ -58,6 +58,10 @@ void draw_score(RenderWindow& window, Text scoreText)
 {
 	window.draw(scoreText);
 }
+void draw_tips(RenderWindow& window, Text text)
+{
+	window.draw(text);
+}
 void draw_full_map(RenderWindow& window, Map* map[])
 {
 	//отрисовка 4-х текстур классов Map
@@ -94,7 +98,7 @@ void draw_border(RenderWindow& window, Sprite& border)
 		}
 	}
 }
-void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, Sound& boss_punch, bool flag_attack, Text scoreText)
+void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& border, Sprite& shader, Enemy* enemy, Enemy* boss, Enemy* tank, Sound& boss_punch, bool flag_attack, Text scoreText, Text tipText)
 {
 	window.clear();
 	int delta_health = 0;
@@ -152,5 +156,6 @@ void Game::Graphics(RenderWindow& window, Player* player, Map* map[], Sprite& bo
 		window.draw(Fon_4);
 	}
 	window.draw(shader);
+	draw_tips(window, tipText);
 	window.display();
 }
