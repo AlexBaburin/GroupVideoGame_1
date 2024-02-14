@@ -54,10 +54,10 @@ void Boss::Fight(Player* player, Enemy* boss, Sound& boss_punch)
         {
             if ((sqrt(distance_x * distance_x + distance_y * distance_y) <= (field_of_sight * 0.7)) && (time_of_frame > 3.96))
             {
-                std::cout << "You got a damage!\n";
+                //std::cout << "You got a damage!\n";
                 if ((attack_delay == Keyboard::E))
                 {
-                    std::cout << "E\n";
+                    //std::cout << "E\n";
                     flag = true;
                     delay = 10000;
                     boss->UpdateLives(-(player->damage));
@@ -149,7 +149,7 @@ void Warrior::Fight(Player* player, Enemy* enemy, Sound& boss_punch)
             {
                 if (attack_delay == Keyboard::E)
                 {
-                    std::cout << "E\n";
+                    //std::cout << "E\n";
                     /*if ((time.getElapsedTime().asMilliseconds() > delay))
                     {*/
                         flag = true;
@@ -163,7 +163,7 @@ void Warrior::Fight(Player* player, Enemy* enemy, Sound& boss_punch)
                 if (/*!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > delay && */interval_between_attacks.getElapsedTime().asSeconds() > 2)
                 {
                     index = 1;
-                    std::cout << "You got a damage!\n";
+                    //std::cout << "You got a damage!\n";
                     player->UpdateLives(-GetRandomDamage());
                     interval_between_attacks.restart();
                 }
@@ -252,7 +252,7 @@ void Tank::Fight(Player* player, Enemy* tank, Sound& boss_punch)
             {
                 if (attack_delay == Keyboard::E)
                 {
-                    std::cout << "E\n";
+                    //std::cout << "E\n";
                     /*if ((time.getElapsedTime().asMilliseconds() > delay))
                     {*/
                         flag = true;
@@ -266,7 +266,7 @@ void Tank::Fight(Player* player, Enemy* tank, Sound& boss_punch)
                 if (/*!flag && time_of_frame > 4 && time.getElapsedTime().asSeconds() > delay &&*/ interval_between_attacks.getElapsedTime().asSeconds() > 2)
                 {
                     index = 1;
-                    std::cout << "You got a damage!\n";
+                    //std::cout << "You got a damage!\n";
                     player->UpdateLives(-GetRandomDamage());
                     interval_between_attacks.restart();
                 }
@@ -886,7 +886,7 @@ int main()
         bool flag_attack = false, flag_enemy = false, flag_tank = false;
         RenderWindow window(VideoMode(RESOLUTION, RESOLUTION), "Video game");
         icon.loadFromFile("icon.png");
-        window.setIcon(128, 128, icon.getPixelsPtr()); //установка иконки игры (хз, поставил из своей игры, можете поменять)
+        window.setIcon(128, 128, icon.getPixelsPtr()); //установка иконки игры
         cl.restart();
         game.PlayMusic_background(Main_player);
         while (window.isOpen())
@@ -933,7 +933,7 @@ int main()
                 game.Graphics(window, Main_player, map, border, shader, enemy, boss, tank, boss_punch, flag_attack, scoreText, tipText); // отрисовка карты и игрока
                 if (cl.getElapsedTime().asSeconds() >= 1) {
                     Main_player->score--;//обновляет таймер в секундах.
-                    std::cout << Main_player->score << "\n";
+                    //std::cout << Main_player->score << "\n";
                     cl.restart();
                 }
             }
